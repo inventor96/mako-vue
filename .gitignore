@@ -1,0 +1,17 @@
+.DS_Store
+.php_cs.cache
+.php-cs-fixer.cache
+.phpunit.cache
+.phpunit.result.cache
+/.idea
+/vendor
+composer.phar
+node_modules/
+public/hot
+.vite/
+/app/config/*/*.php
+!app/config/docker/*.php
+!app/config/migration/*.php
+.env
+.env.*.local
+.env.local

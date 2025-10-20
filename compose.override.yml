@@ -1,0 +1,78 @@
+services:
+  db:
+    environment:
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - ./docker/db/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+      target: dev
+      args:
+        UID: "${UID}"
+        GID: "${GID}"
+    user: "${UID}:${GID}"
+    environment:
+      - UID=${UID}
+      - GID=${GID}
+      - LISTEN_DOMAIN=${LISTEN_DOMAIN}
+    volumes:
+      - .:/var/www/html
+      - ./docker/backend/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini # enable xdebug
+      - ./docker/backend/apache2/sites-available/dev.conf:/etc/apache2/sites-enabled/dev.conf # access db and mail via backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # ensure xdebug can reach the host
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+      target: dev
+      args:
+        UID: "${UID}"
+        GID: "${GID}"
+    user: "${UID}:${GID}"
+    environment:
+      - UID=${UID}
+      - GID=${GID}
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - default
+    environment:
+      MAILPIT_SMTP_BIND_ADDR: 0.0.0.0:1025
+      MAILPIT_WEB_BIND_ADDR: 0.0.0.0:8025
+
+  adminer:
+    # custom Adminer image with autologin based on github.com/jeliebig/Adminer-Autologin
+    build:
+      context: ./docker/adminer
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - default
+    environment:
+      ADMINER_DESIGN: ichier
+      ADMINER_PLUGINS: login-env-vars
+      ADMINER_DRIVER: server
+      ADMINER_SERVER: db
+      ADMINER_USERNAME: root
+      ADMINER_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      ADMINER_DB: "${MYSQL_DATABASE}"

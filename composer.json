@@ -1,0 +1,40 @@
+{
+    "name": "inventor96/mako-vue",
+    "description": "Opinionated boilerplate for web apps using PHP/Mako on the backend, and Vue on the frontend.",
+    "keywords": [
+        "mako",
+        "framework",
+        "vue",
+        "boilerplate",
+        "inertia"
+    ],
+    "homepage": "https://github.com/inventor96/mako-vue",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Caleb Hornbeck",
+            "homepage": "https://calebhornbeck.dev"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "require": {
+        "php": ">=8.1.0",
+        "mako/framework": "10.0.*",
+        "inventor96/inertia-mako": "^1.4.3",
+        "phpmailer/phpmailer": "^6.10"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "suggest": {
+        "mako/toolbar": "A debug toolbar"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "php app/reactor app:generate-secret"
+        ]
+    }
+}

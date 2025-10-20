@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["app/resources/views/*"]
+        }
+    },
+    "exclude": ["node_modules", "public"]
+}
