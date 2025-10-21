@@ -24,7 +24,6 @@ class TemplateAddon extends Template {
 				'times',
 				'filterDowns',
 				'partials',
-				'csrf',
 			]);
 		}
 	}

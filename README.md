@@ -6,7 +6,7 @@ This is my personal starter template for building web applications with Mako and
 ## Features & Stack
 - [Mako](https://makoframework.com/) PHP Framework
 - Environment-specific configuration via hierarchical pattern with Mako's built-in config system
-- Common Mako templating engine addons
+- Common Mako templating engine add-ons
 - Persistent storage tailored to MySQL/MariaDB databases
 - Database migrations via built-in Mako migration system, including separate user for running migrations
 - Email sending via [PHPMailer](https://github.com/PHPMailer/PHPMailer)
