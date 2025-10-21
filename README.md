@@ -42,3 +42,10 @@ Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed 
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools cannot open files in an IDE running on the host while using Docker.
 - Refactor email class to be a service rather than a model.
+- Move NavLinks class to be a service rather than a model?
+- Create Mako console command(s) to scaffold new Mako-Vue projects. (e.g. session cookie setup, security/encryption keys, etc.)
+- Configure Composer stuff for easier installation as a project.
+	- Console commands
+	- NPM install?
+	- Prompt for network setup script?
+	- Add/remove common changes in .gitignore?
