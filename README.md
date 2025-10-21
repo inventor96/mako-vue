@@ -5,6 +5,7 @@ This is my personal starter template for building web applications with Mako and
 
 ## Features & Stack
 - [Mako](https://makoframework.com/) PHP Framework
+- Environment-specific configuration via hierarchical pattern with Mako's built-in config system
 - Common Mako templating engine addons
 - Persistent storage tailored to MySQL/MariaDB databases
 - Database migrations via built-in Mako migration system, including separate user for running migrations
@@ -33,7 +34,7 @@ This is my personal starter template for building web applications with Mako and
 \* Local development only.
 
 ## How to Use It
-Coming soon...
+Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
 ## Limitations & To-Dos
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
