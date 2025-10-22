@@ -9,8 +9,7 @@ This is my personal starter template for building web applications with Mako and
 - Common Mako templating engine add-ons
 - Persistent storage tailored to MySQL/MariaDB databases
 - Database migrations via built-in Mako migration system, including separate user for running migrations
-- Basic email organization
-- Email sending via [PHPMailer](https://github.com/PHPMailer/PHPMailer)
+- [mako-mailer](https://github.com/inventor96/mako-mailer) for email sending and templating
 - [Inertia.js](https://inertiajs.com/) for seamless server-driven SPA experience
 - [intertia-mako](https://github.com/inventor96/inertia-mako) adapter
 - [Vue.js 3](https://vuejs.org/) with Composition API and Single File Components
