@@ -5,8 +5,6 @@
  * @var \mako\syringe\Container       $container
  */
 
-use app\interfaces\EmailSenderInterface;
-use app\adapters\PHPMailerAdapter;
 use app\validator\rules\Boolean;
 use app\view\renderers\TemplateAddon;
 use mako\validator\ValidatorFactory;
@@ -25,9 +23,6 @@ define('DT_FMT_DISPLAY', 'D, j M Y g:i:s a T');
 $validator = $container->get(ValidatorFactory::class)
 	->extend('boolean', Boolean::class)
 ;
-
-// email sender
-$container->register(EmailSenderInterface::class, PHPMailerAdapter::class);
 
 // template renderer override for add-ons
 $container->get(ViewFactory::class)->extend('.tpl.php', TemplateAddon::class);

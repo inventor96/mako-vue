@@ -1,6 +1,7 @@
 <?php
 
 use inventor96\Inertia\InertiaPackage;
+use inventor96\MakoMailer\MailerPackage;
 
 return
 [
@@ -142,7 +143,7 @@ return
 	[
 		'core' =>
 		[
-
+			MailerPackage::class,
 		],
 		'web' =>
 		[

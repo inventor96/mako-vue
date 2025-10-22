@@ -2,8 +2,9 @@
 namespace app\http\controllers;
 
 use app\http\routing\middleware\Throttle;
-use app\models\Email;
 use app\models\User;
+use inventor96\MakoMailer\EmailUser;
+use inventor96\MakoMailer\Mailer;
 use mako\gatekeeper\Gatekeeper;
 use mako\gatekeeper\repositories\user\UserRepository;
 use mako\http\routing\attributes\Middleware;
@@ -32,7 +33,7 @@ class Auth extends ControllerBase
 		$post = $this->getValidatedInput([
 			'email' => ['required'],
 			'password' => ['required'],
-			'remember' => ['required', 'in(["1", "0"])'],
+			'remember' => ['required', 'boolean'],
 		]);
 
 		// attempt the login
@@ -67,7 +68,7 @@ class Auth extends ControllerBase
 		return $this->view->render('Pages/Auth/Signup');
 	}
 
-	public function signupAction(User $user, Email $email) {
+	public function signupAction(User $user, Mailer $mailer) {
 		// no need to be here if they're already logged in
 		if ($this->gatekeeper->isLoggedIn()) {
 			return $this->safeRedirectResponse('dashboard:home');
@@ -84,9 +85,21 @@ class Auth extends ControllerBase
 
 		// attempt the signup
 		$u = $user->createOrUpdateFrom($post, $this->gatekeeper);
-		$u->sendWelcomeEmail($email);
+
+		// send the welcome email
+		$this->sendWelcomeEmail($u, $mailer);
+
 		$this->session->putFlash('success', 'Your account has been created! Please check your email for the activation link.');
 		return $this->safeRedirectResponse('auth:login');
+	}
+
+	protected function sendWelcomeEmail(User $user, Mailer $mailer): bool {
+		$token = $user->generateActionToken();
+		$user->save();
+		return $mailer->sendTemplate([EmailUser::fromUser($user)], 'Welcome!', 'welcome', [
+			'first_name' => $user->first_name,
+			'token' => $token,
+		]);
 	}
 
 	public function activate(string $token) {
@@ -106,7 +119,7 @@ class Auth extends ControllerBase
 	}
 
 	#[Middleware(Throttle::class)]
-	public function forgotPasswordAction(Email $mail) {
+	public function forgotPasswordAction(Mailer $mailer) {
 		// validate values
 		$post = $this->getValidatedInput([
 			'email' => ['required', 'email'],
@@ -121,10 +134,15 @@ class Auth extends ControllerBase
 			// check for alternative account states
 			if (!$user->isActivated()) {
 				// send activation email
-				$user->sendWelcomeEmail($mail);
+				$this->sendWelcomeEmail($user, $mailer);
 			} else {
 				// send reset email
-				$user->sendPasswordResetEmail($mail);
+				$token = $user->generateActionToken();
+				$user->save();
+				return $mailer->sendTemplate([EmailUser::fromUser($user)], 'Password Reset', 'forgot-password', [
+					'first_name' => $user->first_name,
+					'token' => $token,
+				]);
 			}
 		}
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b6035e09107dff16b72812341ee4d52",
+    "content-hash": "c407403594681b130f78797c06bbb03a",
     "packages": [
         {
             "name": "doctrine/sql-formatter",
@@ -108,6 +108,54 @@
                 "source": "https://github.com/inventor96/inertia-mako/tree/v1.4.3"
             },
             "time": "2025-09-15T09:01:22+00:00"
+        },
+        {
+            "name": "inventor96/mako-mailer",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/inventor96/mako-mailer.git",
+                "reference": "46df8895c212fec65be05dfeea6dc3485059a527"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/inventor96/mako-mailer/zipball/46df8895c212fec65be05dfeea6dc3485059a527",
+                "reference": "46df8895c212fec65be05dfeea6dc3485059a527",
+                "shasum": ""
+            },
+            "require": {
+                "mako/framework": "^10.0",
+                "php": "~8.1.0|~8.2.0|~8.3.0",
+                "phpmailer/phpmailer": "^6.0|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "inventor96\\MakoMailer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Hornbeck",
+                    "homepage": "https://github.com/inventor96",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple emailing package for the PHP Mako framework.",
+            "keywords": [
+                "email",
+                "mailer",
+                "mako"
+            ],
+            "support": {
+                "issues": "https://github.com/inventor96/mako-mailer/issues",
+                "source": "https://github.com/inventor96/mako-mailer/tree/v1.0.1"
+            },
+            "time": "2025-10-22T07:41:24+00:00"
         },
         {
             "name": "mako/framework",

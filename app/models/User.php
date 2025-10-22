@@ -6,6 +6,7 @@ use app\traits\AssignRequireTrait;
 use app\traits\AutoIdRelationTrait;
 use app\traits\OrmInstanceGetTrait;
 use InvalidArgumentException;
+use inventor96\MakoMailer\interfaces\EmailUserInterface;
 use mako\database\midgard\ResultSet;
 use mako\chrono\Time;
 use mako\database\exceptions\DatabaseException;
@@ -34,7 +35,7 @@ use mako\validator\exceptions\ValidationException;
  * @property ?Time $locked_until
  * @property Group[]|ResultSet $groups
  */
-class User extends GatekeeperUser implements ValidatorSpecInterface {
+class User extends GatekeeperUser implements ValidatorSpecInterface, EmailUserInterface {
 	use AutoIdRelationTrait;
 	use AssignRequireTrait;
 	use OrmInstanceGetTrait;
@@ -84,6 +85,16 @@ class User extends GatekeeperUser implements ValidatorSpecInterface {
 			'last_name' => ['required'],
 			'email' => ['required', 'email'],
 		];
+	}
+
+	public function getName(): ?string
+	{
+		return trim("{$this->first_name} {$this->last_name}") ?: null;
+	}
+
+	public function getEmail(): string
+	{
+		return $this->email;
 	}
 
 	/**
@@ -166,33 +177,5 @@ class User extends GatekeeperUser implements ValidatorSpecInterface {
 		}
 
 		return $user;
-	}
-
-	/**
-	 * Sends the welcome email with the link to finish setting up the account.
-	 *
-	 * @param Email $email
-	 */
-	public function sendWelcomeEmail(Email $email) {
-		$token = $this->generateActionToken();
-		$this->save();
-		return $email->sendTemplate([EmailUser::fromUser($this)], 'Welcome!', 'welcome', [
-			'first_name' => $this->first_name,
-			'token' => $token,
-		]);
-	}
-
-	/**
-	 * Send email with the link to reset the user's password.
-	 *
-	 * @param Email $email
-	 */
-	public function sendPasswordResetEmail(Email $email) {
-		$token = $this->generateActionToken();
-		$this->save();
-		return $email->sendTemplate([EmailUser::fromUser($this)], 'Password Reset', 'forgot-password', [
-			'first_name' => $this->first_name,
-			'token' => $token,
-		]);
 	}
 }
