@@ -26,7 +26,8 @@
         "mako/framework": "10.0.*",
         "inventor96/inertia-mako": "^1.4.3",
         "phpmailer/phpmailer": "^6.10",
-        "inventor96/mako-mailer": "^1.0"
+        "inventor96/mako-mailer": "^1.0",
+        "inventor96/mako-template-pp": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

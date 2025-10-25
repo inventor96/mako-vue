@@ -2,6 +2,7 @@
 
 use inventor96\Inertia\InertiaPackage;
 use inventor96\MakoMailer\MailerPackage;
+use inventor96\MakoTemplatePP\TemplatePackage;
 
 return
 [
@@ -144,6 +145,7 @@ return
 		'core' =>
 		[
 			MailerPackage::class,
+			TemplatePackage::class,
 		],
 		'web' =>
 		[

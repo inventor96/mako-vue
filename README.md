@@ -6,9 +6,9 @@ This is my personal starter template for building web applications with Mako and
 ## Features & Stack
 - [Mako](https://makoframework.com/) PHP Framework
 - Environment-specific configuration via hierarchical pattern with Mako's built-in config system
-- Common Mako templating engine add-ons
 - Persistent storage tailored to MySQL/MariaDB databases
 - Database migrations via built-in Mako migration system, including separate user for running migrations
+- [mako-template-pp](https://github.com/inventor96/mako-template-pp) for enhanced templating capabilities
 - [mako-mailer](https://github.com/inventor96/mako-mailer) for email sending and templating
 - [Inertia.js](https://inertiajs.com/) for seamless server-driven SPA experience
 - [intertia-mako](https://github.com/inventor96/inertia-mako) adapter
@@ -39,9 +39,8 @@ Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed 
 ## Limitations & To-Dos
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
-- Vue DevTools cannot open files in an IDE running on the host while using Docker.
+- Vue DevTools in Docker cannot open files in an IDE running on the host.
 - Move NavLinks class to be a module rather than a model
-- Move templating helpers to be a separate mako package
 - Create Mako console command(s) to scaffold new Mako-Vue projects. (e.g. session cookie setup, security/encryption keys, etc.)
 - Configure Composer stuff for easier installation as a project.
 	- Console commands
