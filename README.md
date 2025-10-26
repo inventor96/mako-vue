@@ -48,3 +48,4 @@ Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed 
 	- NPM install?
 	- Prompt for network setup script?
 	- Add/remove common changes in .gitignore?
+- Update network script to separate Xdebug ports for multiple projects on the same host.

@@ -13,6 +13,8 @@ services:
       args:
         UID: "${UID}"
         GID: "${GID}"
+    healthcheck:
+      test: []
     user: "${UID}:${GID}"
     environment:
       - UID=${UID}
@@ -38,8 +40,7 @@ services:
       - UID=${UID}
       - GID=${GID}
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     volumes:
       - .:/app
     ports:
@@ -49,8 +50,7 @@ services:
     image: axllent/mailpit:latest
     restart: unless-stopped
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - default
     environment:
@@ -64,8 +64,7 @@ services:
       dockerfile: ./Dockerfile
     restart: unless-stopped
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - default
     environment:
