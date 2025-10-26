@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+# ensure working directory is the directory containing this script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # intro
 echo ""
 echo "This script will help you configure the network settings for your Docker-based"
