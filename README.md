@@ -19,6 +19,7 @@ This is my personal starter template for building web applications with Mako and
 - [Bootstrap Icons](https://icons.getbootstrap.com/) for iconography
 - [Bootswatch](https://bootswatch.com/) for easy theming
 - Common pre-built components and layout for Vue.js
+- Minimal banner to indicate non-production environments
 - Simple authentication scaffolding
 - IDE helpers for VSCode
 - Optional Dockerization for consistent development and deployment
