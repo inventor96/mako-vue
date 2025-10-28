@@ -1,7 +1,6 @@
 <?php
 namespace app\models;
 
-use app\interfaces\ValidatorSpecInterface;
 use app\traits\AssignRequireTrait;
 use app\traits\AutoIdRelationTrait;
 use app\traits\OrmInstanceGetTrait;

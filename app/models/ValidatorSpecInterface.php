@@ -1,5 +1,5 @@
 <?php
-namespace app\interfaces;
+namespace app\models;
 
 interface ValidatorSpecInterface {
 	/**
