@@ -2,8 +2,8 @@
 namespace app\http\controllers;
 
 use app\interfaces\ValidatorSpecInterface;
-use app\models\NavLinkFactory;
-use app\models\NavLinks;
+use app\modules\ui\navbar\NavLinkFactory;
+use app\modules\ui\navbar\NavLinks;
 use app\models\User;
 use InvalidArgumentException;
 use mako\application\Application;

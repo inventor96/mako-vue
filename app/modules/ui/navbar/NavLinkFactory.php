@@ -1,5 +1,5 @@
 <?php
-namespace app\models;
+namespace app\modules\ui\navbar;
 
 use mako\http\Request;
 use mako\http\routing\URLBuilder;

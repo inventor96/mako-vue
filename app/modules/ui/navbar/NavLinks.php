@@ -1,5 +1,7 @@
 <?php
-namespace app\models;
+namespace app\modules\ui\navbar;
+
+use app\models\User;
 
 class NavLinks {
 	public function __construct(

@@ -1,5 +1,5 @@
 <?php
-namespace app\models;
+namespace app\modules\ui\navbar;
 
 class NavLink {
 	public string $name;
