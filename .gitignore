@@ -15,3 +15,5 @@ public/hot
 .env
 .env.*.local
 .env.local
+/composer.lock
+/package-lock.json
