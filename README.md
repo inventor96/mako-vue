@@ -41,7 +41,7 @@ Use composer to create a new project based on this boilerplate:
 composer create-project inventor96/mako-vue your-project-name
 ```
 
-If you don't/can't use composer on your host, and for general usage of this boilerplate, please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
+For additional details, if you don't/can't use composer on your host, and/or for general usage of this boilerplate; please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
 ## Limitations & To-Dos
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.

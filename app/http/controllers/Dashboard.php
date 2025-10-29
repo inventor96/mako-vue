@@ -8,6 +8,6 @@ class Dashboard extends ControllerBase
 	 */
 	public function home()
 	{
-		return $this->safeRedirectResponse('boxes:home');
+		return $this->view->render('Pages/Dashboard/home');
 	}
 }
