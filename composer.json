@@ -1,6 +1,6 @@
 {
     "name": "inventor96/mako-vue",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Opinionated boilerplate for web apps using PHP/Mako on the backend, and Vue on the frontend.",
     "keywords": [
         "mako",
@@ -37,7 +37,8 @@
             "php app/reactor openssl:generate-key",
             "php app/reactor gatekeeper:generate-auth-key",
             "php app/reactor session:generate-name",
-            "php app/reactor git:update-ignore"
+            "php app/reactor git:update-ignore",
+            "php app/reactor post-create-project"
         ]
     }
 }

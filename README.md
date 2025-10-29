@@ -35,21 +35,16 @@ This is my personal starter template for building web applications with Mako and
 \* Local development only.
 
 ## How to Use It
-Run the following command to create a new project based on this boilerplate:
+Use composer to create a new project based on this boilerplate:
 
 ```bash
 composer create-project inventor96/mako-vue your-project-name
 ```
 
-Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
+If you don't/can't use composer on your host, and for general usage of this boilerplate, please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
 ## Limitations & To-Dos
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
-- Configure Composer stuff for easier installation as a project.
-	- Console commands
-	- NPM install?
-	- Prompt for network setup script?
-	- Add/remove common changes in .gitignore?
 - Update network script to separate Xdebug ports for multiple projects on the same host.
