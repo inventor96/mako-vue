@@ -35,6 +35,12 @@ This is my personal starter template for building web applications with Mako and
 \* Local development only.
 
 ## How to Use It
+Run the following command to create a new project based on this boilerplate:
+
+```bash
+composer create-project inventor96/mako-vue your-project-name
+```
+
 Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
 ## Limitations & To-Dos
