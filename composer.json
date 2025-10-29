@@ -36,7 +36,10 @@
     },
     "scripts": {
         "post-create-project-cmd": [
-            "php app/reactor app:generate-secret"
+            "php app/reactor app:generate-secret",
+            "php app/reactor openssl:generate-key",
+            "php app/reactor gatekeeper:generate-auth-key",
+            "php app/reactor session:generate-name"
         ]
     }
 }

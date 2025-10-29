@@ -41,7 +41,6 @@ Please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed 
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
-- Create Mako console command(s) to scaffold new Mako-Vue projects. (e.g. session cookie setup, security/encryption keys, etc.)
 - Configure Composer stuff for easier installation as a project.
 	- Console commands
 	- NPM install?
