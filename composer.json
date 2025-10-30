@@ -1,6 +1,6 @@
 {
     "name": "inventor96/mako-vue",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Opinionated boilerplate for web apps using PHP/Mako on the backend, and Vue on the frontend.",
     "keywords": [
         "mako",
