@@ -31,9 +31,10 @@ fi
 
 # check for .env file
 if [ ! -f ../.env ]; then
-	echo ".env file not found in project root. Do you want to create one based on .env.example? (y/n)"
+	echo ".env file not found in project root. Do you want to create one based on .env.example? (Y/n)"
 	read -r create_env
-	if [ "$create_env" = "y" ]; then
+	# default to Y if the user just presses Enter (empty input)
+	if [ -z "$create_env" ] || [ "$create_env" = "y" ] || [ "$create_env" = "Y" ]; then
 		cp ../.env.example ../.env
 		echo ".env file created from .env.example"
 		echo ""
@@ -137,8 +138,9 @@ echo "LISTEN_DOMAIN: $domain_name"
 echo "BACKEND_PORT: $backend_port"
 echo "FRONTEND_PORT: $frontend_port"
 echo ""
-read -p "Do you want to proceed? (y/n) " confirm
-if [ "$confirm" != "y" ]; then
+read -p "Do you want to proceed? (Y/n) " confirm
+confirm=${confirm:-Y}
+if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
 	echo "Aborting."
 	exit 1
 fi
