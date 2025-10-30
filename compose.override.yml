@@ -44,7 +44,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "${LISTEN_IP}:${FRONTEND_PORT}:${FRONTEND_PORT}"
 
   mailpit:
     image: axllent/mailpit:latest
