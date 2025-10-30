@@ -1,6 +1,7 @@
 <?php
 namespace app\console\commands;
 
+use mako\application\Application;
 use mako\reactor\Command;
 
 /**
@@ -21,8 +22,9 @@ class PostCreateProject extends Command
 	/**
 	 * Prints a greeting.
 	 */
-	public function execute(): void
+	public function execute(Application $app): void
 	{
+		$this->nl();
 		$this->write('<blue>+++++ Thank you for choosing Mako-Vue! +++++</blue>');
 		$this->nl();
 		$this->write('Just a few more steps to get your new project up and running...');
@@ -37,13 +39,18 @@ class PostCreateProject extends Command
 		$this->nl();
 		$this->write('If you are using <blue>DOCKER</blue>:');
 		$this->ol([
-			'Run <green>./docker/config_network.sh</green> to setup your local domain name and non-conflicting networking details.',
-			'Run <green>docker compose up --build</green> to build and start your containers!',
+			'Run <green>./docker/config_network.sh</green> <blue>ON YOUR HOST</blue> to setup your local domain name and non-conflicting networking details.',
+			'Run <green>docker compose up --build</green> to build and start your containers.',
+			'Run <green>npm install</green> (on your host) or <green>docker compose exec frontend npm install</green> (to run it inside Docker) to install JavaScript dependencies.',
 		]);
 		$this->nl();
-		$config_net = $this->confirm('Would you like to run <green>./docker/config_network.sh</green> now?', 'y');
-		if ($config_net) {
-			passthru('./docker/config_network.sh');
+
+		// prompt to run the network configuration script if not in docker
+		if ($app->getEnvironment() !== 'docker') {
+			$config_net = $this->confirm('Would you like to run <green>./docker/config_network.sh</green> now?', 'y');
+			if ($config_net) {
+				passthru('./docker/config_network.sh');
+			}
 		}
 	}
 }
