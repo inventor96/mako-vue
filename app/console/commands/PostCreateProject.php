@@ -22,7 +22,7 @@ class PostCreateProject extends Command
 	/**
 	 * Prints a greeting.
 	 */
-	public function execute(Application $app): void
+	public function execute(Application $app)
 	{
 		$this->nl();
 		$this->write('<blue>+++++ Thank you for choosing Mako-Vue! +++++</blue>');
@@ -49,8 +49,11 @@ class PostCreateProject extends Command
 		if ($app->getEnvironment() !== 'docker') {
 			$config_net = $this->confirm('Would you like to run <green>./docker/config_network.sh</green> now?', 'y');
 			if ($config_net) {
-				passthru('./docker/config_network.sh');
+				return static::STATUS_SUCCESS; // allows chaining with `&& ./docker/config_network.sh`
 			}
 		}
+
+		$this->write('<yellow>Skipping network configuration script.</yellow>');
+		return static::STATUS_ERROR; // no errors, but prevents `&& ./docker/config_network.sh` from running
 	}
 }

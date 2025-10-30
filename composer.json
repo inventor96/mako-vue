@@ -38,7 +38,7 @@
             "php app/reactor gatekeeper:generate-auth-key",
             "php app/reactor session:generate-name",
             "php app/reactor git:update-ignore",
-            "php app/reactor post-create-project"
+            "(php app/reactor post-create-project && ./docker/config_network.sh) || true"
         ]
     }
 }
