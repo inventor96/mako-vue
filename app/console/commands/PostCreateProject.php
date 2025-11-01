@@ -105,10 +105,11 @@ class PostCreateProject extends Command
 			'LISTEN_DOMAIN' => '',
 			'BACKEND_PORT'  => '',
 			'FRONTEND_PORT' => '',
+			'XDEBUG_PORT'   => '',
 		];
 		foreach ($settings as $key => $value) {
 			preg_match('/^' . $key . '\s*=\s*(.*)$/m', $env_contents, $matches);
-			$settings[$key] = trim($matches[1]) ?? '';
+			$settings[$key] = trim($matches[1] ?? '');
 		}
 
 		// get launch.json Xdebug port
@@ -172,7 +173,7 @@ class PostCreateProject extends Command
 		$this->write('  LISTEN_DOMAIN: ' . ($settings['LISTEN_DOMAIN'] ?: '<yellow>not set</yellow>'));
 		$this->write('  BACKEND_PORT:  ' . ($settings['BACKEND_PORT'] ?: '<yellow>not set</yellow>'));
 		$this->write('  FRONTEND_PORT: ' . ($settings['FRONTEND_PORT'] ?: '<yellow>not set</yellow>'));
-		$this->write('  Xdebug port:   ' . ($launch_port ?: '<yellow>not set</yellow>'));
+		$this->write('  XDEBUG_PORT:   ' . ($settings['XDEBUG_PORT'] ?: '<yellow>not set</yellow>'));
 
 		// ask for domain name
 		$this->nl();
@@ -307,6 +308,7 @@ class PostCreateProject extends Command
 		} while ($try_again);
 
 		// calculate launch.json Xdebug port
+		$launch_port = (int)trim($settings['XDEBUG_PORT']);
 		if (empty($launch_port) || !$had_launch || $launch_port === 9003) {
 			$ip_parts = explode('.', $settings['LISTEN_IP']);
 			$launch_port = 9000 + ((int)$ip_parts[2] * 256) + (int)$ip_parts[3];
@@ -324,7 +326,7 @@ class PostCreateProject extends Command
 			}
 
 			// all good
-			$launch_port = $input_launch_port;
+			$settings['XDEBUG_PORT'] = $input_launch_port;
 			$try_again = false;
 
 			// privileged port warning
@@ -340,7 +342,7 @@ class PostCreateProject extends Command
 		$this->write("  LISTEN_DOMAIN: {$settings['LISTEN_DOMAIN']}");
 		$this->write("  BACKEND_PORT:  {$settings['BACKEND_PORT']}");
 		$this->write("  FRONTEND_PORT: {$settings['FRONTEND_PORT']}");
-		$this->write("  Xdebug port:   {$launch_port}");
+		$this->write("  XDEBUG_PORT:   {$settings['XDEBUG_PORT']}");
 
 		$confirm = $this->confirm('Apply these changes?', 'y');
 		if (!$confirm) {
@@ -362,7 +364,7 @@ class PostCreateProject extends Command
 
 		// apply changes to launch.json
 		if ($launch_config_i !== null) {
-			$launch_json['configurations'][$launch_config_i]['port'] = (int)$launch_port;
+			$launch_json['configurations'][$launch_config_i]['port'] = (int)$settings['XDEBUG_PORT'];
 			$launch_contents = json_encode($launch_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 			$fs->put($launch_dst, $launch_contents);
 			$this->write('Updated <green>.vscode/launch.json</green>.');
