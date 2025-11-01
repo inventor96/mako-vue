@@ -47,4 +47,5 @@ For additional details, if you don't/can't use composer on your host, and/or for
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
-- Update network script to separate Xdebug ports for multiple projects on the same host.
+- Add baseline GitHub Copilot instructions.
+- Add tests for backend and frontend code.
