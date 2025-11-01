@@ -24,6 +24,7 @@ services:
       - .:/var/www/html
       - ./docker/backend/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini # enable xdebug
       - ./docker/backend/apache2/sites-available/dev.conf:/etc/apache2/sites-enabled/dev.conf # access db and mail via backend
+      - /etc/hosts:/tmp/hosts:ro # allow post-create-project to check existing host entries
     extra_hosts:
       - "host.docker.internal:host-gateway" # ensure xdebug can reach the host
 
