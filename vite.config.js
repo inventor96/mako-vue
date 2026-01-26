@@ -8,8 +8,6 @@ export default defineConfig(({ mode }) => {
     // get environment variables
     const env = loadEnv(mode, process.cwd(), '');
     const viteDomain = env.VITE_DOMAIN || 'localhost';
-    const vitePort = env.VITE_PORT ? Number(env.VITE_PORT) : 5173;
-    const backendPort = env.VITE_BACKEND_PORT ? Number(env.VITE_BACKEND_PORT) : 8080;
 
     return {
         plugins: [
@@ -51,17 +49,20 @@ export default defineConfig(({ mode }) => {
                 },
             },
         },
-        // custom networking settings to allow working with domains and docker
+        // custom networking settings to allow working with domains, docker, and https
         server: {
-            port: vitePort,
+            host: true,
+            port: 5173,
+            https: false,
             hmr: {
                 host: viteDomain,
-                port: vitePort,
+                port: 5173,
+                protocol: 'wss',
             },
             cors: {
                 origin: [
-                    `http://${viteDomain}:${backendPort}`,
-                    `http://${viteDomain}`,
+                    `https://${viteDomain}:443`,
+                    `https://${viteDomain}`,
                 ],
             },
         },

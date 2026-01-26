@@ -19,3 +19,5 @@ composer.phar
 /package-lock.json
 /.vscode/*
 !.vscode/*.example
+docker/caddy/certs/*
+!.gitkeep

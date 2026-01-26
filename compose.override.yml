@@ -1,4 +1,24 @@
+volumes:
+  caddy_data:
+  caddy_config:
+
 services:
+  caddy:
+    image: caddy:latest
+    ports:
+      - "${LISTEN_IP}:80:80"
+      - "${LISTEN_IP}:443:443"
+      - "${LISTEN_IP}:5173:5173"
+    environment:
+      - LISTEN_DOMAIN=${LISTEN_DOMAIN}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./docker/caddy/certs:/certs
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app
+
   db:
     environment:
       MYSQL_ROOT_HOST: "%"
@@ -21,6 +41,8 @@ services:
       - GID=${GID}
       - LISTEN_DOMAIN=${LISTEN_DOMAIN}
       - XDEBUG_PORT=${XDEBUG_PORT}
+    networks:
+      - app
     volumes:
       - .:/var/www/html
       - ./docker/backend/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini # enable xdebug
@@ -45,8 +67,10 @@ services:
       - backend
     volumes:
       - .:/app
-    ports:
-      - "${LISTEN_IP}:${FRONTEND_PORT}:${FRONTEND_PORT}"
+    networks:
+      - app
+    expose:
+      - "5173"
 
   mailpit:
     image: axllent/mailpit:latest
@@ -54,7 +78,10 @@ services:
     depends_on:
       - backend
     networks:
-      - default
+      - app
+    expose:
+      - "1025"
+      - "8025"
     environment:
       MAILPIT_SMTP_BIND_ADDR: 0.0.0.0:1025
       MAILPIT_WEB_BIND_ADDR: 0.0.0.0:8025
@@ -68,7 +95,9 @@ services:
     depends_on:
       - backend
     networks:
-      - default
+      - app
+    expose:
+      - "8080"
     environment:
       ADMINER_DESIGN: ichier
       ADMINER_PLUGINS: login-env-vars
