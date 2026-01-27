@@ -22,11 +22,12 @@ This is my personal starter template for building web applications with Mako and
 - Minimal banner to indicate non-production environments
 - Simple authentication scaffolding
 - IDE helpers for VSCode
-- Optional Dockerization for consistent development and deployment
+- Dockerization for consistent development and deployment
 	- Separation of dev and prod environments by utilizing compose.override.yml
 	- Separate services for PHP, MariaDB, and Node/Vite
 	- File ownership and permissions handling for seamless host-container interaction*
 	- Pre-configured for Xdebug with VSCode integration*
+	- [Caddy](https://caddyserver.com/) for HTTPS in local development*
 	- [Mailpit](https://mailpit.axllent.org/) for local email testing*
 	- [Adminer](https://www.adminer.org/) for database management*
 	- Host networking allows local domain name usage*
@@ -43,9 +44,12 @@ composer create-project inventor96/mako-vue your-project-name
 
 For additional details, if you don't/can't use composer on your host, and/or for general usage of this boilerplate; please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
-## Limitations & To-Dos
+## Limitations
+- `vite.config.js` is setup for HTTPS via Caddy in Docker. If you are not using Docker, you may need to adjust the Vite server settings for HTTPS or switch to HTTP.
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
+
+## To-Dos
 - Add baseline GitHub Copilot instructions.
 - Add tests for backend and frontend code.
