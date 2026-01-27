@@ -63,8 +63,6 @@ services:
     environment:
       - UID=${UID}
       - GID=${GID}
-    depends_on:
-      - backend
     volumes:
       - .:/app
     networks:
@@ -75,8 +73,6 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     restart: unless-stopped
-    depends_on:
-      - backend
     networks:
       - app
     expose:
@@ -92,8 +88,6 @@ services:
       context: ./docker/adminer
       dockerfile: ./Dockerfile
     restart: unless-stopped
-    depends_on:
-      - backend
     networks:
       - app
     expose:
