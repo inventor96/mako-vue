@@ -2,6 +2,7 @@
 namespace app\console\commands;
 
 use mako\application\Application;
+use mako\cli\output\Output;
 use mako\file\FileSystem;
 use mako\reactor\Command;
 
@@ -27,27 +28,21 @@ class PostCreateProject extends Command
 	{
 		// intro
 		$this->nl();
-		$this->write('<blue>+++++ Thank you for choosing Mako-Vue! +++++</blue>');
-		$intro = "This script will help you configure VScode files and the network settings for a Docker-based project. It will setup the <green>.env</green> file and modify <green>/etc/hosts</green> to set up a local development domain using an available loopback address. This will enable you to access your project via a friendly domain name instead of localhost or an IP address. Because each project uses its own loopback IP, you can have multiple projects running simultaneously. This script also allows you to set the host listing port to 80 to avoid needing to specify a port in the URL. If you choose a privileged port (< 1024), ensure your host's Docker configuration allows binding to it. The script will also set up VSCode tasks and launch configurations for debugging. The launch configuration will be set to use Xdebug with a unique port based on the project IP to allow for simultaneous debugging of multiple projects.";
-
-		// split intro into 80 character parts, preserving words
-		$parts = [];
-		$words = explode(' ', $intro);
-		$line = '';
-		foreach ($words as $word) {
-			if (strlen(strip_tags($line . ' ' . $word)) > 80) {
-				$parts[] = trim($line);
-				$line = $word . ' ';
-			} else {
-				$line .= $word . ' ';
-			}
-		}
-		if (!empty($line)) {
-			$parts[] = trim($line);
-		}
-		foreach ($parts as $part) {
-			$this->write($part);
-		}
+		$this->write('<blue>+++++ Let\'s get this project started! +++++</blue>');
+		$this->writeBlock('This script will help you configure VScode files and the network settings for a Docker-based project. Our approach will enable multiple simultaneous projects to run without port conflicts. Here\'s what we\'ll do:');
+		$this->ol([
+			'Set up the <green>.env</green> file with appropriate network settings.',
+			'Set up VSCode tasks and launch configurations for convenience and debugging with Xdebug.',
+			'Guide you to add an entry to <green>/etc/hosts</green> for local development.',
+			'Facilitate the creation of a local HTTPS certificate using mkcert (if desired).',
+		]);
+		$this->nl();
+		$this->write('Things to be aware of:');
+		$this->ol([
+			'We will be using a loopback IP address above 127.0.0.1 for each project to avoid conflicts.',
+			'The bound ports will be 80 and 443 by default, so you may need to adjust your Docker configuration to allow binding to these ports on your host system.',
+			'You will be responsible for ensuring that the chosen Xdebug port is available on your host system, and open appropriately in your firewall (if necessary).',
+		]);
 
 		// enviroment check
 		$is_docker = $app->getEnvironment() === 'docker';
@@ -103,8 +98,6 @@ class PostCreateProject extends Command
 		$settings = [
 			'LISTEN_IP'     => '',
 			'LISTEN_DOMAIN' => '',
-			'BACKEND_PORT'  => '',
-			'FRONTEND_PORT' => '',
 			'XDEBUG_PORT'   => '',
 		];
 		foreach ($settings as $key => $value) {
@@ -171,14 +164,22 @@ class PostCreateProject extends Command
 		$this->write('Current environment settings:');
 		$this->write('  LISTEN_IP:     ' . ($settings['LISTEN_IP'] ?: '<yellow>not set</yellow>'));
 		$this->write('  LISTEN_DOMAIN: ' . ($settings['LISTEN_DOMAIN'] ?: '<yellow>not set</yellow>'));
-		$this->write('  BACKEND_PORT:  ' . ($settings['BACKEND_PORT'] ?: '<yellow>not set</yellow>'));
-		$this->write('  FRONTEND_PORT: ' . ($settings['FRONTEND_PORT'] ?: '<yellow>not set</yellow>'));
 		$this->write('  XDEBUG_PORT:   ' . ($settings['XDEBUG_PORT'] ?: '<yellow>not set</yellow>'));
+
+		// domain name info
+		$this->nl();
+		$this->writeBlock("The domain name is used to access your project in the browser. It should be a locally-unique name ending in an applicable top-level domain (e.g., <blue>.test</blue>, <blue>.local</blue>, <blue>.dev</blue>). The script will help ensure the domain is not already in use in your hosts file. Some considerations to keep in mind:");
+		$this->ol([
+			'<blue>*.local</blue> can interfere with mDNS on some systems',
+			'<blue>*.localhost</blue> can cause the browser to give the site special treatment, especially around HTTPS. This may be undesirable when aiming for production parity.',
+			'<blue>*.dev</blue> is a real TLD owned by Google and enforces HTTPS in modern browsers via HSTS.',
+			'<blue>*.test</blue> is reserved for testing and is generally a safe choice for local development.',
+		]);
 
 		// ask for domain name
 		$this->nl();
 		$domain_name = (empty($settings['LISTEN_DOMAIN']) || !$had_env || $settings['LISTEN_DOMAIN'] === 'localhost')
-			? basename(realpath($app->getPath() . '/../')) . '.test'
+			? basename(realpath($app->getPath() . '/../')) . '.dev'
 			: $settings['LISTEN_DOMAIN'];
 		$try_again = true;
 		do {
@@ -261,52 +262,6 @@ class PostCreateProject extends Command
 			$try_again = false;
 		} while ($try_again);
 
-		// ask for backend port
-		$this->nl();
-		$backend_port = (empty($settings['BACKEND_PORT']) || !$had_env || $settings['BACKEND_PORT'] === '8080') ? '80' : $settings['BACKEND_PORT'];
-		$try_again = true;
-		do {
-			$input_backend_port = $this->question("Enter the backend port for the project [{$backend_port}]:", $backend_port);
-
-			// validate port
-			if (!is_numeric($input_backend_port) || (int)$input_backend_port < 1 || (int)$input_backend_port > 65535) {
-				$this->write('<red>Please enter a valid port number between 1 and 65535.</red>');
-				continue;
-			}
-
-			// all good
-			$settings['BACKEND_PORT'] = $input_backend_port;
-			$try_again = false;
-
-			// privileged port warning
-			if ((int)$settings['BACKEND_PORT'] < 1024) {
-				$this->write('<yellow>Note: Using a privileged port (< 1024) may require additional configuration on your host to allow Docker to bind to it.</yellow>');
-			}
-		} while ($try_again);
-
-		// ask for frontend port
-		$this->nl();
-		$frontend_port = empty($settings['FRONTEND_PORT']) ? '5173' : $settings['FRONTEND_PORT'];
-		$try_again = true;
-		do {
-			$input_frontend_port = $this->question("Enter the frontend port for the project [{$frontend_port}]:", $frontend_port);
-
-			// validate port
-			if (!is_numeric($input_frontend_port) || (int)$input_frontend_port < 1 || (int)$input_frontend_port > 65535) {
-				$this->write('<red>Please enter a valid port number between 1 and 65535.</red>');
-				continue;
-			}
-
-			// all good
-			$settings['FRONTEND_PORT'] = $input_frontend_port;
-			$try_again = false;
-
-			// privileged port warning
-			if ((int)$settings['FRONTEND_PORT'] < 1024) {
-				$this->write('<yellow>Note: Using a privileged port (< 1024) may require additional configuration on your host to allow Docker to bind to it.</yellow>');
-			}
-		} while ($try_again);
-
 		// calculate launch.json Xdebug port
 		$launch_port = (int)trim($settings['XDEBUG_PORT']);
 		if (empty($launch_port) || !$had_launch || $launch_port === 9003) {
@@ -340,8 +295,6 @@ class PostCreateProject extends Command
 		$this->write('The following changes will be made:');
 		$this->write("  LISTEN_IP:     {$settings['LISTEN_IP']}");
 		$this->write("  LISTEN_DOMAIN: {$settings['LISTEN_DOMAIN']}");
-		$this->write("  BACKEND_PORT:  {$settings['BACKEND_PORT']}");
-		$this->write("  FRONTEND_PORT: {$settings['FRONTEND_PORT']}");
 		$this->write("  XDEBUG_PORT:   {$settings['XDEBUG_PORT']}");
 
 		$confirm = $this->confirm('Apply these changes?', 'y');
@@ -370,6 +323,73 @@ class PostCreateProject extends Command
 			$this->write('Updated <green>.vscode/launch.json</green>.');
 		}
 
+		// mkcert details
+		$cert_file = realpath($app->getPath() . '/../docker/caddy/certs') . '/_wildcard.' . $settings['LISTEN_DOMAIN'] . '.pem';
+		$key_file = realpath($app->getPath() . '/../docker/caddy/certs') . '/_wildcard.' . $settings['LISTEN_DOMAIN'] . '-key.pem';
+		$mkcert_cmd = "mkcert -cert-file '{$cert_file}' -key-file '{$key_file}' '{$settings['LISTEN_DOMAIN']}' '*.{$settings['LISTEN_DOMAIN']}'";
+
+		// check if cert files already exist
+		$recreate_certs = false;
+		if ($cert_files_exist = ($fs->has($cert_file) || $fs->has($key_file))) {
+			$this->nl();
+			$recreate_certs = $this->confirm('<yellow>HTTPS certificate files already exist.</yellow> Would you like to recreate them using mkcert? This will overwrite the existing files.', 'n');
+		}
+
+		// delete existing cert files if needed
+		if ($recreate_certs) {
+			if ($fs->has($cert_file)) {
+				$fs->remove($cert_file);
+			}
+			if ($fs->has($key_file)) {
+				$fs->remove($key_file);
+			}
+			$this->write('Deleted existing HTTPS certificate files.');
+			$cert_files_exist = false;
+		}
+
+		// create mkcert certs if they don't exist
+		if (!$cert_files_exist) {
+			// check for mkcert
+			$create_cert = false;
+			$try_again = false;
+			$this->nl();
+			do {
+				$has_mkcert = trim(shell_exec('which mkcert') ?? '') !== '';
+				if ($has_mkcert) {
+					$this->write('<green>mkcert is installed.</green>');
+					$this->write("mkcert command to be run:");
+					$this->write("  <yellow>{$mkcert_cmd}</yellow>");
+					$create_cert = $this->confirm('Would you like to create a local HTTPS certificate for the domain?', 'y');
+				} else {
+					$this->write('<yellow>mkcert is not detected.</yellow> You can install mkcert from <blue>https://github.com/FiloSottile/mkcert</blue> to create local HTTPS certificates easily. After it is installed, you can retry detection and create the certificate.');
+					$try_again = $this->confirm('Do you want to retry mkcert detection? Enter "n" to skip automatic HTTPS certificate creation.', 'y');
+				}
+			} while ($try_again);
+
+			// create mkcert certificate
+			if ($create_cert) {
+				$this->nl();
+				$this->write("Creating HTTPS certificate using mkcert for <green>{$settings['LISTEN_DOMAIN']}</green>...");
+				$mkcert_output = [];
+				$mkcert_return_var = 0;
+				exec($mkcert_cmd . ' 2>&1', $mkcert_output, $mkcert_return_var);
+				if ($mkcert_return_var !== 0) {
+					$this->write('<red>Failed to create HTTPS certificate using mkcert. Please run the following command manually:</red>');
+					$this->write("  <yellow>{$mkcert_cmd}</yellow>");
+					$this->write('mkcert output:');
+					foreach ($mkcert_output as $line) {
+						$this->write("  <red>{$line}</red>");
+					}
+				} else {
+					$this->write('<green>HTTPS certificate created successfully.</green>');
+				}
+			} else {
+				$this->write('<yellow>Skipping HTTPS certificate creation.</yellow> Please create the certificate files manually so the Caddy container can start correctly:');
+				$this->write("  Cert file: <blue>{$cert_file}</blue>");
+				$this->write("  Key file:  <blue>{$key_file}</blue>");
+			}
+		}
+
 		// instruct user to update /etc/hosts
 		$hosts_line = "{$settings['LISTEN_IP']} {$settings['LISTEN_DOMAIN']} db.{$settings['LISTEN_DOMAIN']} mail.{$settings['LISTEN_DOMAIN']}";
 		$this->nl();
@@ -387,5 +407,33 @@ class PostCreateProject extends Command
 		$this->nl();
 		$this->write('<green>Post-create-project tasks completed successfully!</green>');
 		return static::STATUS_SUCCESS;
+	}
+
+	/**
+	 * Writes a block of text wrapped to the specified width.
+	 * @param string $text   The text to write.
+	 * @param int    $width  The maximum width of each line.
+	 * @param int    $writer The output writer to use.
+	 */
+	protected function writeBlock(string $text, int $width = 80, int $writer = Output::STANDARD): void
+	{
+		// split intro into `$width` character parts, preserving words
+		$parts = [];
+		$words = explode(' ', $text);
+		$line = '';
+		foreach ($words as $word) {
+			if (strlen(strip_tags($line . ' ' . $word)) > $width) {
+				$parts[] = trim($line);
+				$line = $word . ' ';
+			} else {
+				$line .= $word . ' ';
+			}
+		}
+		if (!empty($line)) {
+			$parts[] = trim($line);
+		}
+		foreach ($parts as $part) {
+			$this->write($part, $writer);
+		}
 	}
 }
