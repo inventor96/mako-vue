@@ -28,6 +28,7 @@ This is my personal starter template for building web applications with Mako and
 	- File ownership and permissions handling for seamless host-container interaction*
 	- Pre-configured for Xdebug with VSCode integration*
 	- [Caddy](https://caddyserver.com/) for HTTPS in local development*
+	- [mkcert](https://github.com/FiloSottile/mkcert) for local HTTPS certificate creation*
 	- [Mailpit](https://mailpit.axllent.org/) for local email testing*
 	- [Adminer](https://www.adminer.org/) for database management*
 	- Host networking allows local domain name usage*
