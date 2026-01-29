@@ -392,16 +392,19 @@ class PostCreateProject extends Command
 
 		// instruct user to update /etc/hosts
 		$hosts_line = "{$settings['LISTEN_IP']} {$settings['LISTEN_DOMAIN']} db.{$settings['LISTEN_DOMAIN']} mail.{$settings['LISTEN_DOMAIN']}";
-		$this->nl();
-		$this->write('Please add the following entry to your <green>/etc/hosts</green> file:');
-		$this->write("  {$hosts_line}");
-		$this->write('This requires administrative privileges on your host. e.g.:');
-		$this->write("  <yellow>sudo sh -c 'echo \"{$hosts_line}\" >> /etc/hosts'</yellow>");
+		$hosts_regex = '/^' . preg_quote($settings['LISTEN_IP'], '/') . '\s+' . preg_quote($settings['LISTEN_DOMAIN'], '/') . '(\s+db\.' . preg_quote($settings['LISTEN_DOMAIN'], '/') . ')?(\s+mail\.' . preg_quote($settings['LISTEN_DOMAIN'], '/') . ')?$/m';
+		if ($hosts_needs_update = !preg_match($hosts_regex, $hosts_contents)) {
+			$this->nl();
+			$this->write('Please add the following entry to your <green>/etc/hosts</green> file:');
+			$this->write("  {$hosts_line}");
+			$this->write('This requires administrative privileges on your host. e.g.:');
+			$this->write("  <yellow>sudo sh -c 'echo \"{$hosts_line}\" >> /etc/hosts'</yellow>");
+		}
 
 		// instruct user to run docker-compose down/up
 		$this->nl();
-		$this->write('After updating <green>/etc/hosts</green>, please (re)start the Docker containers to apply the new settings:');
-		$this->write('  <yellow>docker-compose down && docker-compose up --build</yellow>');
+		$this->write(($hosts_needs_update ? 'After updating <green>/etc/hosts</green>, please' : 'Please') . ' (re)start the Docker containers to apply the new settings:');
+		$this->write('  <yellow>docker compose down && docker compose up --build</yellow>');
 
 		// done
 		$this->nl();
