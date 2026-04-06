@@ -1,6 +1,7 @@
 <?php
 
 use app\http\controllers\Account;
+use app\http\controllers\API;
 use app\http\controllers\Auth;
 use app\http\controllers\Dashboard;
 use app\http\routing\middleware\RequireAuth;
@@ -20,6 +21,8 @@ $routes->group([
 			[RequireAuth::class, ['require' => false]],
 		],
 	], function (Routes $routes) {
+		$routes->get('/api/status', [API::class, 'status'], 'api:status');
+
 		#region authentication
 		$routes->get('/login', [Auth::class, 'login'], 'auth:login');
 		$routes->post('/login', [Auth::class, 'loginAction'], 'auth:loginAction');
