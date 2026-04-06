@@ -1,5 +1,5 @@
 # ------- Frontend build stage -------
-FROM node:21.6 AS frontend-build
+FROM node:22 AS frontend-build
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
