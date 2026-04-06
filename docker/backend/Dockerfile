@@ -35,6 +35,7 @@ COPY . .
 
 # Copy frontend assets
 COPY --from=frontend-build /app/public/build /var/www/html/public/build
+COPY --from=frontend-build /app/public/manifest.json /var/www/html/public/manifest.json
 
 # Generate inertia version
 RUN echo "<?php return ['$(date +%Y%m%d%H%M%S)'];" \

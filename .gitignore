@@ -8,6 +8,8 @@
 composer.phar
 /node_modules
 /public/hot
+/public/build/
+/public/manifest.json
 .vite/
 /app/config/*/*.php
 !/app/config/docker/*.php

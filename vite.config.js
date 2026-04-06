@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
     const viteDomain = env.VITE_DOMAIN || 'localhost';
 
     return {
+        base: '/', // ensure bundled assets are served from the root
         plugins: [
             laravel({
                 input: 'app/resources/js/app.js',
@@ -33,8 +34,9 @@ export default defineConfig(({ mode }) => {
             },
         },
         build: {
-            outDir: 'public/build',
-            assetsDir: 'assets',
+            outDir: 'public',
+            assetsDir: 'build',
+            emptyOutDir: false, // don't delete the entire public directory, just the build assets
         },
         css: {
             preprocessorOptions: {

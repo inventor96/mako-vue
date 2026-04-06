@@ -7,9 +7,4 @@ return [
      * e.g. `'app'` would resolve to `resources/views/app.tpl.php`.
      */
     'html_template' => 'app',
-
-    /**
-     * The initial title for the full HTML page.
-     */
-    //'title' => 'Loading...',
 ];
