@@ -3,7 +3,6 @@
 use app\http\controllers\Account;
 use app\http\controllers\Auth;
 use app\http\controllers\Dashboard;
-use app\http\controllers\Fonts;
 use app\http\routing\middleware\RequireAuth;
 use mako\http\routing\Routes;
 
@@ -21,8 +20,6 @@ $routes->group([
 			[RequireAuth::class, ['require' => false]],
 		],
 	], function (Routes $routes) {
-		$routes->get('/assets/fonts/{font}', [Fonts::class, 'fonts'], 'fonts:fonts');
-
 		#region authentication
 		$routes->get('/login', [Auth::class, 'login'], 'auth:login');
 		$routes->post('/login', [Auth::class, 'loginAction'], 'auth:loginAction');

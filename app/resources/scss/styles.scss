@@ -1,6 +1,8 @@
 // bootstrap overrides
 $enable-negative-margins: true;
 
+// TODO: import font files as possible for local bundling
+
 // bootswatch variables
 @import "bootswatch/dist/flatly/variables";
 
@@ -55,8 +57,12 @@ $enable-negative-margins: true;
 // bootswatch theme
 @import "bootswatch/dist/flatly/bootswatch";
 
-// bootstrap icons
-$bootstrap-icons-font-dir: "/assets/fonts";
+// bootstrap icons -- remove cache busting query string because vite will handle cache busting with hashed filenames
+$bootstrap-icons-font-dir: "bootstrap-icons/font/fonts";
+$bootstrap-icons-font: "bootstrap-icons";
+$bootstrap-icons-font-file: "#{$bootstrap-icons-font-dir}/#{$bootstrap-icons-font}";
+$bootstrap-icons-font-src: url("#{$bootstrap-icons-font-file}.woff2") format("woff2"),
+                           url("#{$bootstrap-icons-font-file}.woff") format("woff");
 @import "bootstrap-icons/font/bootstrap-icons";
 
 // inherit line-height utilities from $utilities map for bootstrap icons

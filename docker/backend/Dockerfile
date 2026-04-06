@@ -34,7 +34,6 @@ RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --optim
 COPY . .
 
 # Copy frontend assets
-COPY --from=frontend-build /app/node_modules/bootstrap-icons/font/fonts /var/www/html/public/assets/fonts
 COPY --from=frontend-build /app/public/build /var/www/html/public/build
 
 # Generate inertia version
