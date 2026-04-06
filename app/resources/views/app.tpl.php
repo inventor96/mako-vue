@@ -7,6 +7,7 @@
     {{ raw:$tags->js }}
 </head>
 <body>
+    <noscript>Your browser does not support JavaScript or it is disabled. Please enable JavaScript to use this application.</noscript>
     <div id="app" data-page="{{ attribute:$page }}"></div>
 </body>
 </html>
