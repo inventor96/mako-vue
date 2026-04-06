@@ -18,7 +18,8 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 5s
+      start_period: 30s
+      start_interval: 5s
     environment:
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
       MYSQL_USER: "${MYSQL_USER}"
@@ -34,7 +35,8 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 5s
+      start_period: 60s
+      start_interval: 5s
     networks:
       - app
     environment:
