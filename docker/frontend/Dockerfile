@@ -2,6 +2,7 @@
 FROM node:24 AS base
 WORKDIR /app
 COPY package.json package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 # ------- Dev stage -------
 FROM base AS dev
