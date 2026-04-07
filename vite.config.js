@@ -44,9 +44,10 @@ export default defineConfig(({ mode }) => {
                     // ignore warnings from Bootstrap
                     silenceDeprecations: [
                         'import',
-                        'mixed-decls',
+                        //'mixed-decls',
                         'color-functions',
                         'global-builtin',
+                        'if-function',
                     ],
                 },
             },
