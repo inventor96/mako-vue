@@ -28,7 +28,7 @@ services:
       MYSQL_MIGRATION_PASSWORD: "${MYSQL_MIGRATION_PASSWORD}"
 
   db:
-    image: mariadb:10.11
+    image: mariadb:11.8.6 # lts
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin --silent ping -h localhost -u\"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" >/dev/null 2>&1 || exit 1"]
