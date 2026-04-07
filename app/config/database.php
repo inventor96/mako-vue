@@ -27,18 +27,15 @@ return
 	 * options    : (optional) An array of PDO options
 	 * queries    : (optional) Queries that will be executed right after a connection has been made
 	 */
-	'configurations' =>
-	[
-		'makovue' =>
-		[
+	'configurations' => [
+		'makovue' => [
 			'dsn'         => 'mysql:dbname=makovue;host=127.0.0.1;port=3306',
 			'username'    => 'makovue',
 			'password'    => '',
 			'persistent'  => false,
 			'log_queries' => false,
 			'reconnect'   => false,
-			'queries'     =>
-			[
+			'queries'     => [
 				'SET NAMES utf8mb4',
 			],
 		],

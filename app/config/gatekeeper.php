@@ -43,8 +43,7 @@ return
 	 * The array key is the entity class name and the
 	 * value is the corresponding policy class name.
 	 */
-	'policies' =>
-	[
+	'policies' => [
 	],
 
 	/*
@@ -52,8 +51,7 @@ return
 	 * Brute force throttling
 	 * ---------------------------------------------------------
 	 */
-	'throttling' =>
-	[
+	'throttling' => [
 		/*
 		 * Set to TRUE to enable brute force throttling.
 		 */
@@ -75,8 +73,7 @@ return
 	 * Cookie options
 	 * ---------------------------------------------------------
 	 */
-	'cookie_options' =>
-	[
+	'cookie_options' => [
 		/*
 		 * The path on the server in which the cookie will be available on.
 		 * If set to '/', the cookie will be available within the entire domain.
@@ -93,9 +90,18 @@ return
 		/*
 		 * Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client. When set to TRUE,
 		 * the cookie will only be set if a secure connection exists. On the server-side, it's on the programmer to send this kind of cookie
-		 * only on secure connection (e.g. with respect to $this->request->secure()).
+		 * only on secure connection (e.g. with respect to $this->request->isSecure()).
 		 */
 		'secure' => false,
+
+		/*
+		 * When TRUE the cookie will be stored in a separate partition for each top-level site.
+		 * This means that the same third-party cookie cannot be shared across different websites,
+		 * preventing it from being used for cross-site tracking or correlating user activity.
+		 * This setting is part of the CHIPS (Cookies Having Independent Partitioned State) standard
+		 * and is intended to preserve functionality of embedded services while improving privacy.
+		 */
+		'partitioned' => false,
 
 		/*
 		 * When TRUE the cookie will be made accessible only through the HTTP protocol.

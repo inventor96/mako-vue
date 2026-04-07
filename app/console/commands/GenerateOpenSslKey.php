@@ -3,6 +3,8 @@ namespace app\console\commands;
 
 use mako\application\Application;
 use mako\file\FileSystem;
+use mako\reactor\attributes\CommandDescription;
+use mako\reactor\attributes\CommandName;
 use mako\reactor\Command;
 use mako\security\Key;
 
@@ -11,18 +13,10 @@ use function preg_replace;
 /**
  * Command that generates a new OpenSSL key.
  */
+#[CommandName('openssl:generate-key')]
+#[CommandDescription('Generates a new OpenSSL key.')]
 class GenerateOpenSslKey extends Command
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $command = 'openssl:generate-key';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $description = 'Generates a new OpenSSL key.';
-
 	/**
 	 * Executes the command.
 	 *

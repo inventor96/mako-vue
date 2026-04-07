@@ -3,6 +3,8 @@ namespace app\console\commands;
 
 use mako\application\Application;
 use mako\file\FileSystem;
+use mako\reactor\attributes\CommandDescription;
+use mako\reactor\attributes\CommandName;
 use mako\reactor\Command;
 use mako\utility\Str;
 
@@ -11,18 +13,10 @@ use function preg_replace;
 /**
  * Command that generates a new Gatekeeper auth key.
  */
+#[CommandName('gatekeeper:generate-auth-key')]
+#[CommandDescription('Generates a new Gatekeeper auth key.')]
 class GenerateGatekeeperAuthKey extends Command
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $command = 'gatekeeper:generate-auth-key';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $description = 'Generates a new Gatekeeper auth key.';
-
 	/**
 	 * Executes the command.
 	 *

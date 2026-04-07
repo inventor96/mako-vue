@@ -1,6 +1,8 @@
 <?php
 namespace app\http\controllers;
 
+use mako\http\response\builders\JSON;
+
 class API extends ControllerBase
 {
 	/**
@@ -9,7 +11,7 @@ class API extends ControllerBase
 	public function status()
 	{
 		// add any necessary logic here, e.g. checking database connection, etc.
-		return $this->jsonResponse([
+		return new JSON([
 			'status' => 'ok',
 			'timestamp' => time(),
 		]);

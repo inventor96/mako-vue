@@ -7,9 +7,9 @@ use app\http\controllers\Dashboard;
 use app\http\routing\middleware\RequireAuth;
 use mako\http\routing\Routes;
 
-/** @var \mako\http\routing\Routes $routes */
-/** @var \mako\application\Application $app */
-/** @var \mako\syringe\Container $container */
+/** @var mako\http\routing\Routes $routes */
+/** @var mako\application\Application $app */
+/** @var mako\syringe\Container $container */
 
 $routes->group([
 	'patterns' => [
@@ -18,7 +18,7 @@ $routes->group([
 	// no auth requirement
 	$routes->group([
 		'middleware' => [
-			[RequireAuth::class, ['require' => false]],
+			RequireAuth::class => ['require' => false],
 		],
 	], function (Routes $routes) {
 		$routes->get('/api/status', [API::class, 'status'], 'api:status');

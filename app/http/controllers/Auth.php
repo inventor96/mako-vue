@@ -5,7 +5,7 @@ use app\http\routing\middleware\Throttle;
 use app\models\User;
 use inventor96\MakoMailer\EmailUser;
 use inventor96\MakoMailer\Mailer;
-use mako\gatekeeper\Gatekeeper;
+use mako\gatekeeper\LoginStatus;
 use mako\gatekeeper\repositories\user\UserRepository;
 use mako\http\routing\attributes\Middleware;
 
@@ -42,10 +42,10 @@ class Auth extends ControllerBase
 			return $this->safeRedirectResponse('dashboard:home');
 		} else {
 			$this->session->putFlash('error', match ($result) {
-				Gatekeeper::LOGIN_INCORRECT => "We don't recognize that email or password. Please try again.",
-				Gatekeeper::LOGIN_ACTIVATING => 'Your account has not been activated. Please check your email for the activation link.',
-				Gatekeeper::LOGIN_BANNED => 'Your account has been banned. Please contact support.',
-				Gatekeeper::LOGIN_LOCKED => 'You have made too many failed login attempts. Please wait a while before trying again.',
+				LoginStatus::InvalidCredentials => "We don't recognize that email or password. Please try again.",
+				LoginStatus::NotActivated => 'Your account has not been activated. Please check your email for the activation link.',
+				LoginStatus::Banned => 'Your account has been banned. Please contact support.',
+				LoginStatus::Locked => 'You have made too many failed login attempts. Please wait a while before trying again.',
 				default => "There was an error logging you in. Please try again later.",
 			});
 			return $this->safeRedirectResponse('auth:login');

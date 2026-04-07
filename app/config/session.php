@@ -29,8 +29,7 @@ return
 	 * Note that a time to live of 0 seconds for cookies mean that they
 	 * expire at the end of the session (when the browser closes).
 	 */
-	'ttl' =>
-	[
+	'ttl' => [
 		'data'   => 604800,
 		'cookie' => 604800,
 	],
@@ -40,8 +39,7 @@ return
 	 * Cookie options
 	 * ---------------------------------------------------------
 	 */
-	'cookie_options' =>
-	[
+	'cookie_options' => [
 		/*
 		 * The path on the server in which the cookie will be available on.
 		 * If set to '/', the cookie will be available within the entire domain.
@@ -61,6 +59,15 @@ return
 		 * only on secure connection (e.g. with respect to $this->request->secure()).
 		 */
 		'secure' => false,
+
+		/*
+		 * When TRUE the cookie will be stored in a separate partition for each top-level site.
+		 * This means that the same third-party cookie cannot be shared across different websites,
+		 * preventing it from being used for cross-site tracking or correlating user activity.
+		 * This setting is part of the CHIPS (Cookies Having Independent Partitioned State) standard
+		 * and is intended to preserve functionality of embedded services while improving privacy.
+		 */
+		'partitioned' => false,
 
 		/*
 		 * When TRUE the cookie will be made accessible only through the HTTP protocol.
@@ -93,37 +100,31 @@ return
 	 * table        : Name of the database table (only required when using "database" sessions).
 	 * prefix       : Session data prefix (only available for "apcu" and "redis" sessions).
 	 */
-	'configurations' =>
-	[
-		'apcu' =>
-		[
+	'configurations' => [
+		'apcu' => [
 			'type'   => 'apcu',
-			'prefix' => 'session_',
+			'prefix' => 'mako:session:',
 		],
 
-		'database' =>
-		[
+		'database' => [
 			'type'          => 'database',
 			'configuration' => 'makovue',
 			'table'         => 'mako_sessions',
 		],
 
-		'file' =>
-		[
+		'file' => [
 			'type' => 'file',
 			'path' => MAKO_APPLICATION_PATH . '/storage/sessions',
 		],
 
-		'null' =>
-		[
+		'null' => [
 			'type' => 'null',
 		],
 
-		'redis' =>
-		[
+		'redis' => [
 			'type'          => 'redis',
 			'configuration' => 'session',
-			'prefix'        => 'session_',
+			'prefix'        => 'mako:session:',
 		],
 	],
 ];

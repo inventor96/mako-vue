@@ -3,26 +3,19 @@ namespace app\console\commands;
 
 use mako\application\Application;
 use mako\file\FileSystem;
+use mako\reactor\attributes\CommandDescription;
+use mako\reactor\attributes\CommandName;
 use mako\reactor\Command;
-use mako\utility\Str;
 
 use function preg_replace;
 
 /**
- * Command that generates a new session name.
+ * Command that updates the .gitignore file after setting up the project.
  */
+#[CommandName('git:update-ignore')]
+#[CommandDescription('Updates the .gitignore file after setting up the project.')]
 class UpdateGitIgnore extends Command
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $command = 'git:update-ignore';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $description = 'Updates the .gitignore file after setting up the project.';
-
 	/**
 	 * Lines to remove from the .gitignore file.
 	 */

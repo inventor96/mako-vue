@@ -4,25 +4,19 @@ namespace app\console\commands;
 use mako\application\Application;
 use mako\cli\output\Output;
 use mako\file\FileSystem;
+use mako\reactor\attributes\CommandDescription;
+use mako\reactor\attributes\CommandName;
 use mako\reactor\Command;
 
 /**
  * Post create project command.
  */
+#[CommandName('post-create-project')]
+#[CommandDescription('Runs post-create-project tasks.')]
 class PostCreateProject extends Command
 {
 	/**
-	 * {@inheritDoc}
-	 */
-	protected string $command = 'post-create-project';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $description = 'Runs post-create-project tasks.';
-
-	/**
-	 * Prints a greeting.
+	 * Executes the command.
 	 */
 	public function execute(Application $app, FileSystem $fs)
 	{
@@ -183,7 +177,7 @@ class PostCreateProject extends Command
 			: $settings['LISTEN_DOMAIN'];
 		$try_again = true;
 		do {
-			$input_domain = $this->question("Enter the local development domain name for the project [{$domain_name}]:", $domain_name);
+			$input_domain = $this->input("Enter the local development domain name for the project [{$domain_name}]:", $domain_name);
 
 			// require a domain name
 			if (empty(trim($input_domain))) {
@@ -236,7 +230,7 @@ class PostCreateProject extends Command
 		$this->nl();
 		$try_again = true;
 		do {
-			$input_ip = $this->question("Enter the local development IP address for the project [{$listen_ip}]:", $listen_ip);
+			$input_ip = $this->input("Enter the local development IP address for the project [{$listen_ip}]:", $listen_ip);
 
 			// validate IP
 			if (filter_var($input_ip, FILTER_VALIDATE_IP) === false) {
@@ -272,7 +266,7 @@ class PostCreateProject extends Command
 		$this->write("<yellow>Since this script cannot determine what ports are already in use on your host, it is your responsibility to ensure the chosen port for Xdebug is available. A best guess is made here based on the loopback IP address.</yellow>");
 		$try_again = true;
 		do {
-			$input_launch_port = $this->question("Enter the Xdebug port for VSCode launch.json [{$launch_port}]:", $launch_port);
+			$input_launch_port = $this->input("Enter the Xdebug port for VSCode launch.json [{$launch_port}]:", $launch_port);
 
 			// validate port
 			if (!is_numeric($input_launch_port) || (int)$input_launch_port < 1 || (int)$input_launch_port > 65535) {

@@ -21,6 +21,18 @@ return
 
 	/*
 	 * ---------------------------------------------------------
+	 * Ingress prefix.
+	 * ---------------------------------------------------------
+	 *
+	 * If your application runs behind an ingress with a path
+	 * prefix, you can set that prefix here. This helps the
+	 * request router correctly resolve the request to the
+	 * appropriate route action.
+	 */
+	'ingress_prefix' => null,
+
+	/*
+	 * ---------------------------------------------------------
 	 * Clean URLs
 	 * ---------------------------------------------------------
 	 *
@@ -63,8 +75,7 @@ return
 	 * If the first segment of the request path matches the language (array key)
 	 * then the default language will be set to the mapped language (array value).
 	 */
-	'languages' =>
-	[
+	'languages' => [
 		//'no' => ['strings' => 'nb_NO', 'locale' => [LC_ALL => ['nb_NO.UTF-8', 'nb_NO.utf8', 'C.UTF-8', 'C'], LC_NUMERIC => 'C']],
 	],
 
@@ -96,34 +107,31 @@ return
 	 * web : Services that are only required for the web
 	 * cli : Services that are only required for the command line interface
 	 */
-	'services' =>
-	[
-		'core' =>
-		[
+	'services' => [
+		'core' => [
 			mako\application\services\SignerService::class,
 			mako\application\services\HTTPService::class,
 			mako\application\services\LoggerService::class,
 			mako\application\services\ViewFactoryService::class,
-			mako\application\services\SessionService::class,
-			mako\application\services\DatabaseService::class,
-			//mako\application\services\RedisService::class,
-			//mako\application\services\I18nService::class,
-			//mako\application\services\HumanizerService::class,
 			mako\application\services\CacheService::class,
-			//mako\application\services\CryptoService::class,
-			mako\application\services\ValidatorFactoryService::class,
-			mako\application\services\PaginationFactoryService::class,
-			mako\application\services\GatekeeperService::class,
-			//mako\application\services\EventService::class,
 			//mako\application\services\CommandBusService::class,
+			//mako\application\services\CryptoService::class,
+			mako\application\services\DatabaseService::class,
+			//mako\application\services\EventService::class,
+			mako\application\services\GatekeeperService::class,
+			//mako\application\services\HumanizerService::class,
+			//mako\application\services\I18nService::class,
+			mako\application\services\PaginationFactoryService::class,
+			//mako\application\services\RateLimiterService::class,
+			//mako\application\services\RedisService::class,
+			mako\application\services\SessionService::class,
+			mako\application\services\ValidatorFactoryService::class,
 			//app\services\BusService::class,
 		],
-		'web' =>
-		[
+		'web' => [
 			mako\application\services\web\ErrorHandlerService::class,
 		],
-		'cli' =>
-		[
+		'cli' => [
 			mako\application\services\cli\ErrorHandlerService::class,
 		],
 	],
@@ -140,19 +148,15 @@ return
 	 * web : Packages that are only required for the web
 	 * cli : Packages that are only required for the command line interface
 	 */
-	'packages' =>
-	[
-		'core' =>
-		[
+	'packages' => [
+		'core' => [
 			MailerPackage::class,
 			TemplatePackage::class,
 		],
-		'web' =>
-		[
+		'web' => [
 			InertiaPackage::class,
 		],
-		'cli' =>
-		[
+		'cli' => [
 
 		],
 	],
@@ -185,8 +189,7 @@ return
 	 * If it is behind a proxy then you can help the framework return the correct client IP (using the X-Forwarded-For header)
 	 * by listing your proxy IP address(es) here.
 	 */
-	'trusted_proxies' =>
-	[
+	'trusted_proxies' => [
 
 	],
 
@@ -210,13 +213,11 @@ return
 	 * replace_placeholders: Should log message placeholders be replaced?
 	 * syslog              : Syslog specific options (https://linux.die.net/man/3/syslog).
 	 */
-	'logger' =>
-	[
+	'logger' => [
 		'channel'              => 'mako',
 		'handler'              => ['Stream'],
 		'replace_placeholders' => true,
-		'syslog'               =>
-		[
+		'syslog'               => [
 			'identifier' => 'Mako',
 			'facility'   => LOG_USER,
 		],
@@ -232,13 +233,11 @@ return
 	 * keep          : Specify a list of cookies or headers to keep when an exception has been handled.
 	 * dont_log      : Array of exception types to ignore when logging errors.
 	 */
-	'error_handler' =>
-	[
+	'error_handler' => [
 		'log_errors'     => true,
 		'display_errors' => false,
 		'keep'           => ['headers' => ['Access-Control-.*']],
-		'dont_log'       =>
-		[
+		'dont_log'       => [
 			mako\http\exceptions\HttpStatusException::class,
 		],
 	],

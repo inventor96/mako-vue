@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @var \mako\application\Application $app
- * @var \mako\syringe\Container       $container
+ * @var mako\application\Application $app
+ * @var mako\syringe\Container       $container
  */
 
 use app\validator\rules\Boolean;

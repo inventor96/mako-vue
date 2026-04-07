@@ -3,6 +3,8 @@ namespace app\console\commands;
 
 use mako\application\Application;
 use mako\file\FileSystem;
+use mako\reactor\attributes\CommandDescription;
+use mako\reactor\attributes\CommandName;
 use mako\reactor\Command;
 use mako\utility\Str;
 
@@ -11,18 +13,10 @@ use function preg_replace;
 /**
  * Command that generates a new session name.
  */
+#[CommandName('session:generate-name')]
+#[CommandDescription('Generates a new session name.')]
 class GenerateSessionName extends Command
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $command = 'session:generate-name';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected string $description = 'Generates a new session name.';
-
 	/**
 	 * Executes the command.
 	 *

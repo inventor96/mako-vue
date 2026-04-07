@@ -8,12 +8,10 @@ return
 [
 	// Inflection rules
 
-	'rules' =>
-	[
+	'rules' => [
 		// Plural noun forms
 
-		'plural' =>
-		[
+		'plural' => [
 			'/er$/i' => 'ere',
 			'/e$/i'  => 'er',
 			'/$/'    => 'er',
@@ -21,8 +19,7 @@ return
 
 		// Irregular words
 
-		'irregular' =>
-		[
+		'irregular' => [
 			'and'   => 'ender',
 			'barn'  => 'barn',
 			'bok'   => 'bøker',
@@ -42,20 +39,14 @@ return
 
 	// Pluralization function
 
-	'pluralize' => static function ($word, $count, $rules)
-	{
-		if($count !== 1)
-		{
-			if(isset($rules['irregular'][$word]))
-			{
+	'pluralize' => static function ($word, $count, $rules) {
+		if ($count !== 1) {
+			if (isset($rules['irregular'][$word])) {
 				$word = $rules['irregular'][$word];
 			}
-			else
-			{
-				foreach($rules['plural'] as $search => $replace)
-				{
-					if(preg_match($search, $word))
-					{
+			else {
+				foreach ($rules['plural'] as $search => $replace) {
+					if (preg_match($search, $word)) {
 						$word = preg_replace($search, $replace, $word);
 
 						break;
