@@ -13,6 +13,7 @@
     "bootswatch": "^5.3.7"
   },
   "devDependencies": {
+    "@inertiajs/vite": "^3.0.3",
     "@inertiajs/vue3": "^3.0.3",
     "@vitejs/plugin-vue": "^6.0.5",
     "laravel-vite-plugin": "^3.0.1",

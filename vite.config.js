@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import inertia from '@inertiajs/vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import vueDevTools from 'vite-plugin-vue-devtools';
@@ -16,6 +17,7 @@ export default defineConfig(({ mode }) => {
                 input: 'app/resources/js/app.js',
                 refresh: true,
             }),
+            inertia(),
             vue({
                 template: {
                     transformAssetUrls: {
