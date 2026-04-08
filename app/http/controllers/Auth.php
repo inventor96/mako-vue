@@ -3,6 +3,7 @@ namespace app\http\controllers;
 
 use app\http\routing\middleware\Throttle;
 use app\models\User;
+use app\modules\users\UserUpsertService;
 use inventor96\MakoMailer\EmailUser;
 use inventor96\MakoMailer\Mailer;
 use mako\gatekeeper\LoginStatus;
@@ -68,7 +69,7 @@ class Auth extends ControllerBase
 		return $this->view->render('Pages/Auth/Signup');
 	}
 
-	public function signupAction(User $user, Mailer $mailer) {
+	public function signupAction(User $user, Mailer $mailer, UserUpsertService $userUpsertService) {
 		// no need to be here if they're already logged in
 		if ($this->gatekeeper->isLoggedIn()) {
 			return $this->safeRedirectResponse('dashboard:home');
@@ -84,7 +85,7 @@ class Auth extends ControllerBase
 		]);
 
 		// attempt the signup
-		$u = $user->createOrUpdateFrom($post, $this->gatekeeper);
+		$u = $userUpsertService->createOrUpdateFrom($user, $post);
 
 		// send the welcome email
 		$this->sendWelcomeEmail($u, $mailer);
