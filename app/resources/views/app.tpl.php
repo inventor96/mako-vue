@@ -8,6 +8,7 @@
 </head>
 <body>
     <noscript>Your browser does not support JavaScript or it is disabled. Please enable JavaScript to use this application.</noscript>
-    <div id="app" data-page="{{ attribute:$page }}"></div>
+    <script data-page="app" type="application/json">{{ raw:$page }}</script>
+    <div id="app"></div>
 </body>
 </html>
