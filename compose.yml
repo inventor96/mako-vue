@@ -21,17 +21,17 @@ services:
       start_period: 30s
       start_interval: 5s
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-      MYSQL_MIGRATION_USER: "${MYSQL_MIGRATION_USER}"
-      MYSQL_MIGRATION_PASSWORD: "${MYSQL_MIGRATION_PASSWORD}"
+      MARIADB_DATABASE: "${MARIADB_DATABASE}"
+      MARIADB_USER: "${MARIADB_USER}"
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD}"
+      MARIADB_MIGRATION_USER: "${MARIADB_MIGRATION_USER}"
+      MARIADB_MIGRATION_PASSWORD: "${MARIADB_MIGRATION_PASSWORD}"
 
   db:
     image: mariadb:11.8.6 # lts
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin --silent ping -h localhost -u\"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" >/dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "mariadb-admin --silent ping -h localhost -u\"$MARIADB_USER\" -p\"$MARIADB_PASSWORD\" >/dev/null 2>&1 || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -40,13 +40,13 @@ services:
     networks:
       - app
     environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_ROOT_HOST: "localhost"
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-      MYSQL_MIGRATION_USER: "${MYSQL_MIGRATION_USER}"
-      MYSQL_MIGRATION_PASSWORD: "${MYSQL_MIGRATION_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD}"
+      MARIADB_ROOT_HOST: "localhost"
+      MARIADB_DATABASE: "${MARIADB_DATABASE}"
+      MARIADB_USER: "${MARIADB_USER}"
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD}"
+      MARIADB_MIGRATION_USER: "${MARIADB_MIGRATION_USER}"
+      MARIADB_MIGRATION_PASSWORD: "${MARIADB_MIGRATION_PASSWORD}"
     volumes:
       - db_data:/var/lib/mysql
       # consider enabling this *ONLY* for the initial creation of the db

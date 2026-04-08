@@ -1,26 +1,26 @@
 #!/bin/bash
 set -e
 
-echo "Initializing database '${MYSQL_DATABASE}'..."
+echo "Initializing database '${MARIADB_DATABASE}'..."
 
-mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <<-EOSQL
+mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" <<-EOSQL
   -- Ensure we are in the right database
-  CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
-  USE \`${MYSQL_DATABASE}\`;
+  CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;
+  USE \`${MARIADB_DATABASE}\`;
 
   -- Make sure the app and migration users exists
-  CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-  CREATE USER IF NOT EXISTS '${MYSQL_MIGRATION_USER}'@'%' IDENTIFIED BY '${MYSQL_MIGRATION_PASSWORD}';
+  CREATE USER IF NOT EXISTS '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
+  CREATE USER IF NOT EXISTS '${MARIADB_MIGRATION_USER}'@'%' IDENTIFIED BY '${MARIADB_MIGRATION_PASSWORD}';
 
   -- Strip any lingering privileges and reapply minimal required ones
-  REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${MYSQL_USER}'@'%';
+  REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${MARIADB_USER}'@'%';
   GRANT SELECT, INSERT, UPDATE, DELETE
-    ON \`${MYSQL_DATABASE}\`.*
-    TO '${MYSQL_USER}'@'%';
-  REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${MYSQL_MIGRATION_USER}'@'%';
+    ON \`${MARIADB_DATABASE}\`.*
+    TO '${MARIADB_USER}'@'%';
+  REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${MARIADB_MIGRATION_USER}'@'%';
   GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP
-    ON \`${MYSQL_DATABASE}\`.*
-    TO '${MYSQL_MIGRATION_USER}'@'%';
+    ON \`${MARIADB_DATABASE}\`.*
+    TO '${MARIADB_MIGRATION_USER}'@'%';
   FLUSH PRIVILEGES;
 
   -- Bootstrap the migrations table
@@ -31,4 +31,4 @@ mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <<-EOSQL
   );
 EOSQL
 
-echo "✅ Database '${MYSQL_DATABASE}' initialized and privileges tightened."
+echo "✅ Database '${MARIADB_DATABASE}' initialized and privileges tightened."
