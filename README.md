@@ -52,6 +52,3 @@ For additional details, if you don't/can't use composer on your host, and/or for
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
 - Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
-
-## To-Dos
-- Add baseline GitHub Copilot instructions.
