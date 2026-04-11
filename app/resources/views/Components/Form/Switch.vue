@@ -15,7 +15,7 @@ const props = defineProps({
 		default: '',
 	},
 	modelValue: { // for true/false setups
-		type: Boolean,
+		type: [Boolean, Array],
 		required: false,
 		default: false,
 	},
@@ -43,7 +43,35 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+function isArrayMode() {
+	return props.value !== null && Array.isArray(props.modelValue);
+}
+
+function isChecked() {
+	if (isArrayMode()) {
+		return props.modelValue.includes(props.value);
+	}
+
+	return !!props.modelValue;
+}
+
 function onChange(event) {
+	if (isArrayMode()) {
+		const next = [...props.modelValue];
+		const currentIndex = next.indexOf(props.value);
+
+		if (event.target.checked && currentIndex === -1) {
+			next.push(props.value);
+		}
+
+		if (!event.target.checked && currentIndex !== -1) {
+			next.splice(currentIndex, 1);
+		}
+
+		emit('update:modelValue', next);
+		return;
+	}
+
 	emit('update:modelValue', event.target.checked);
 }
 </script>
@@ -65,7 +93,7 @@ function onChange(event) {
 				:value="props.value ?? 1"
 				class="form-check-input"
 				:class="{'is-invalid': props.error}"
-				:checked="props.modelValue"
+				:checked="isChecked()"
 				@change="onChange"
 			/>
 			<slot name="label" />
