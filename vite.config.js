@@ -26,9 +26,13 @@ export default defineConfig(({ mode }) => {
                     },
                 },
             }),
-            vueDevTools({
-                appendTo: 'app/resources/js/app.js',
-            }),
+            ...(mode === 'production'
+                ? []
+                : [
+                    vueDevTools({
+                        appendTo: 'app/resources/js/app.js',
+                    }),
+                ]),
         ],
         resolve: {
             alias: {
@@ -51,6 +55,25 @@ export default defineConfig(({ mode }) => {
                         'global-builtin',
                         'if-function',
                     ],
+                },
+            },
+        },
+        test: {
+            environment: 'jsdom',
+            setupFiles: ['app/resources/js/tests/setup.js'],
+            include: ['app/resources/js/tests/**/*.spec.js'],
+            coverage: {
+                provider: 'v8',
+                reporter: ['text', 'html'],
+                reportsDirectory: './coverage/frontend',
+                include: [
+                    'app/resources/views/Components/**/*.vue',
+                ],
+                thresholds: {
+                    statements: 85,
+                    branches: 80,
+                    functions: 82,
+                    lines: 85,
                 },
             },
         },

@@ -5,6 +5,8 @@
 .phpunit.result.cache
 /.idea
 coverage/
+tests/
+app/resource/js/tests/
 vendor/
 composer.phar
 node_modules/
