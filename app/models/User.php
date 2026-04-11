@@ -102,6 +102,18 @@ class User extends GatekeeperUser implements ValidatorSpecInterface, EmailUserIn
 	}
 
 	/**
+	 * Resolves a group entity by id.
+	 *
+	 * The primary use of this wrapper is to provide a seam for cleaner unit tests
+	 * without requiring static-call replacement hacks.
+	 *
+	 * @codeCoverageIgnore
+	 */
+	protected function resolveGroupById(int $groupId): Group {
+		return Group::getInstanceOrThrow($groupId);
+	}
+
+	/**
 	 * Syncs user group memberships to the provided group id list.
 	 */
 	public function syncGroups(array $groupIds): self {
@@ -122,7 +134,7 @@ class User extends GatekeeperUser implements ValidatorSpecInterface, EmailUserIn
 		// add to groups that aren't in the current list
 		foreach ($groupIds as $groupId) {
 			if (!in_array($groupId, $currentGroupIds)) {
-				$group = Group::getInstanceOrThrow($groupId);
+				$group = $this->resolveGroupById($groupId);
 				$group->addUser($this);
 			}
 		}

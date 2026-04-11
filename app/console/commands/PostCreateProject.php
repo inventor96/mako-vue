@@ -16,6 +16,31 @@ use mako\reactor\Command;
 class PostCreateProject extends Command
 {
 	/**
+	 * Checks if a shell command exists on the current system.
+	 *
+	 * @codeCoverageIgnore
+	 */
+	protected function commandExists(string $command): bool
+	{
+		return trim(shell_exec('which ' . escapeshellarg($command)) ?? '') !== '';
+	}
+
+	/**
+	 * Runs a shell command and returns output lines with exit status.
+	 *
+	 * @return array{output: array<int, string>, code: int}
+	 * @codeCoverageIgnore
+	 */
+	protected function runShellCommand(string $command): array
+	{
+		$output = [];
+		$returnCode = 0;
+		exec($command . ' 2>&1', $output, $returnCode);
+
+		return ['output' => $output, 'code' => $returnCode];
+	}
+
+	/**
 	 * Executes the command.
 	 */
 	public function execute(Application $app, FileSystem $fs)
@@ -348,7 +373,7 @@ class PostCreateProject extends Command
 			$try_again = false;
 			$this->nl();
 			do {
-				$has_mkcert = trim(shell_exec('which mkcert') ?? '') !== '';
+				$has_mkcert = $this->commandExists('mkcert');
 				if ($has_mkcert) {
 					$this->write('<green>mkcert is installed.</green>');
 					$this->write("mkcert command to be run:");
@@ -364,14 +389,12 @@ class PostCreateProject extends Command
 			if ($create_cert) {
 				$this->nl();
 				$this->write("Creating HTTPS certificate using mkcert for <green>{$settings['LISTEN_DOMAIN']}</green>...");
-				$mkcert_output = [];
-				$mkcert_return_var = 0;
-				exec($mkcert_cmd . ' 2>&1', $mkcert_output, $mkcert_return_var);
-				if ($mkcert_return_var !== 0) {
+				$mkcert_result = $this->runShellCommand($mkcert_cmd);
+				if ($mkcert_result['code'] !== 0) {
 					$this->write('<red>Failed to create HTTPS certificate using mkcert. Please run the following command manually:</red>');
 					$this->write("  <yellow>{$mkcert_cmd}</yellow>");
 					$this->write('mkcert output:');
-					foreach ($mkcert_output as $line) {
+					foreach ($mkcert_result['output'] as $line) {
 						$this->write("  <red>{$line}</red>");
 					}
 				} else {

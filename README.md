@@ -33,6 +33,7 @@ This is my personal starter template for building web applications with Mako and
 	- [Adminer](https://www.adminer.org/) for database management*
 	- Host networking allows local domain name usage*
 	- Allows concurrent projects to run locally without the need for port separation or reverse proxies*
+- [PHPUnit](https://phpunit.de/) for backend testing
 
 \* Local development only.
 
@@ -45,6 +46,24 @@ composer create-project inventor96/mako-vue your-project-name
 
 For additional details, if you don't/can't use composer on your host, and/or for general usage of this boilerplate; please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
+## Testing (PHP)
+Run backend unit tests inside the Docker backend container:
+
+```bash
+docker compose exec backend composer test
+```
+
+Useful variants:
+
+```bash
+docker compose exec backend composer test:unit
+docker compose exec backend composer test:coverage
+```
+
+Current baseline covers pure unit tests only (no database integration tests yet).
+
+The `test:coverage` script sets `XDEBUG_MODE=coverage` automatically. It also writes a browsable HTML coverage report to `coverage/index.html`.
+
 ## Limitations
 - `vite.config.js` is setup for HTTPS via Caddy in Docker. If you are not using Docker, you may need to adjust the Vite server settings for HTTPS or switch to HTTP.
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
@@ -53,4 +72,4 @@ For additional details, if you don't/can't use composer on your host, and/or for
 
 ## To-Dos
 - Add baseline GitHub Copilot instructions.
-- Add tests for backend and frontend code.
+- Add tests for frontend code.

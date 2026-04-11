@@ -4,6 +4,7 @@
 .phpunit.cache
 .phpunit.result.cache
 /.idea
+coverage/
 vendor/
 composer.phar
 node_modules/

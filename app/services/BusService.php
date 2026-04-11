@@ -6,6 +6,7 @@ use mako\application\services\BusService as BaseBusService;
 
 /**
  * {@inheritDoc}
+ * @codeCoverageIgnore
  */
 class BusService extends BaseBusService
 {
