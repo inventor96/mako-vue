@@ -9,6 +9,43 @@ MKCERT_NOTICE=0
 MKCERT_NOTICE_REASON=""
 MKCERT_NOTICE_COMMAND=""
 
+maybe_update_hosts_file() {
+  local env_file listen_ip listen_domain hosts_line run_hosts_reply
+
+  env_file="$PROJECT_DIR/.env"
+  if [ ! -f "$env_file" ]; then
+    return
+  fi
+
+  listen_ip="$(get_env_value "LISTEN_IP" "$env_file")"
+  listen_domain="$(get_env_value "LISTEN_DOMAIN" "$env_file")"
+  if [ -z "$listen_ip" ] || [ -z "$listen_domain" ]; then
+    return
+  fi
+
+  hosts_line="$listen_ip $listen_domain db.$listen_domain mail.$listen_domain"
+
+  if grep -Fq "$hosts_line" /etc/hosts; then
+    return
+  fi
+
+  if [ ! -t 0 ]; then
+    echo ">> Add this entry to /etc/hosts to enable local domains:"
+    echo ">> $hosts_line"
+    echo ">> Suggested command: sudo sh -c 'echo \"$hosts_line\" >> /etc/hosts'"
+    return
+  fi
+
+  echo ">> setup.sh can run the suggested /etc/hosts update command now"
+  echo ">> Command: sudo sh -c 'echo \"$hosts_line\" >> /etc/hosts'"
+  read -r -p ">> Run this command automatically? [Y/n] " run_hosts_reply
+  case "$run_hosts_reply" in
+    y|Y|yes|YES|"")
+      sudo sh -c "echo \"$hosts_line\" >> /etc/hosts"
+      ;;
+  esac
+}
+
 is_valid_mkcert_domain() {
   local domain="$1"
   [[ "$domain" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$ ]]
@@ -63,14 +100,8 @@ echo ">> Creating project: $PROJECT_NAME"
 DOCKER_FLAGS="--rm -i"
 [ -t 0 ] && DOCKER_FLAGS="$DOCKER_FLAGS -t" # add the -t flag if the script is run in an interactive terminal
 
-docker run $DOCKER_FLAGS \
-  --user "$(id -u):$(id -g)" \
-  -e MAKO_SKIP_AUTOMATIC_MKCERT=1 \
-  -v "$PARENT_DIR:/workspace" \
-  -v /etc/hosts:/etc/hosts:ro \
-  -w /workspace \
-  composer:latest \
-  composer create-project inventor96/mako-vue "$PROJECT_NAME"
+
+maybe_update_hosts_file
 
 process_mkcert_request
 
