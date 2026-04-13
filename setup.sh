@@ -62,6 +62,7 @@ echo ">> Creating project: $PROJECT_NAME"
 
 DOCKER_FLAGS="--rm -i"
 [ -t 0 ] && DOCKER_FLAGS="$DOCKER_FLAGS -t" # add the -t flag if the script is run in an interactive terminal
+
 docker run $DOCKER_FLAGS \
   --user "$(id -u):$(id -g)" \
   -e MAKO_SKIP_AUTOMATIC_MKCERT=1 \
@@ -75,7 +76,7 @@ process_mkcert_request
 
 echo ">> Running frontend build"
 
-docker run --rm \
+docker run $DOCKER_FLAGS \
   --user "$(id -u):$(id -g)" \
   -v "$PROJECT_DIR:/app" \
   -w /app \
