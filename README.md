@@ -39,13 +39,37 @@ This is my personal starter template for building web applications with Mako and
 \* Local development only.
 
 ## How to Use It
-Use composer to create a new project based on this boilerplate:
+To avoid any potential host incompatibilities, the recommended way to set up this boilerplate is to use the [`setup.sh`](./setup.sh) script, which will use ephemeral Docker containers to run the necessary setup commands for you, and coordinate `mkcert` and `/etc/hosts` updates for local HTTPS and domain name usage.
+
+`setup.sh` supports two workflows:
+- Create a brand-new project from this boilerplate (`./setup.sh <project-name>`)
+- Initialize an already-cloned repository (`./setup.sh` from the repo root)
 
 ```bash
-composer create-project inventor96/mako-vue your-project-name
+curl -sLo /tmp/setup.sh https://raw.githubusercontent.com/inventor96/mako-vue/refs/heads/main/setup.sh && bash /tmp/setup.sh your-project-name
 ```
 
-For additional details, if you don't/can't use composer on your host, and/or for general usage of this boilerplate; please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
+If you already cloned this repository and want to run the setup process in-place:
+
+```bash
+cd your-project-name
+./setup.sh
+```
+
+If you wish, and if your host meets all dependencies, you can also use composer directly on your host:
+
+```bash
+# creating a new project from the boilerplate
+composer create-project inventor96/mako-vue your-project-name
+
+# setting up an already-cloned repository
+composer install
+php app/reactor post-create-project
+```
+
+The post-create-project script (which is also automatically run by the `composer create-project` command) will attempt to run the `mkcert` command, but you will be responsible for editing your `/etc/hosts` file (a one-liner command will be provided).
+
+For additional details, please see the [wiki](https://github.com/inventor96/mako-vue/wiki) for detailed instructions on setting up and using this boilerplate.
 
 ## Limitations
 - `vite.config.js` is setup for HTTPS via Caddy in Docker. If you are not using Docker, you may need to adjust the Vite server settings for HTTPS or switch to HTTP.

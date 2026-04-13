@@ -102,7 +102,7 @@ class PostCreateProject extends Command
 		$this->ol([
 			'We will be using a loopback IP address above 127.0.0.1 for each project to avoid conflicts.',
 			'The bound ports will be 80 and 443 by default, so you may need to adjust your Docker configuration to allow binding to these ports on your host system.',
-			'You will be responsible for ensuring that the chosen Xdebug port is available on your host system, and open appropriately in your firewall (if necessary).',
+			'You will be responsible for ensuring that the chosen Xdebug port is available on your host system, and opened appropriately in your firewall (if necessary).',
 		]);
 
 		// enviroment check
