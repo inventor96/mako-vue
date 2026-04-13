@@ -119,7 +119,7 @@ class PostCreateProject extends Command
 			// prompt to copy tasks.json
 			$this->nl();
 			$this->write('<yellow>tasks.json not found.</yellow>');
-			$copy_tasks = $this->confirm('Would you like to create <green>.vscode/tasks.json</green> from the example?', 'y');
+			$copy_tasks = $this->confirm('Would you like to create <green>.vscode/tasks.json</green> from the example?', true);
 			if ($copy_tasks) {
 				$fs->copy($tasks_src, $tasks_dst);
 				$this->write('Created <green>.vscode/tasks.json</green>.');
@@ -133,7 +133,7 @@ class PostCreateProject extends Command
 			// prompt to copy launch.json
 			$this->nl();
 			$this->write('<yellow>launch.json not found.</yellow>');
-			$copy_launch = $this->confirm('Would you like to create <green>.vscode/launch.json</green> from the example?', 'y');
+			$copy_launch = $this->confirm('Would you like to create <green>.vscode/launch.json</green> from the example?', true);
 			if ($copy_launch) {
 				$fs->copy($launch_src, $launch_dst);
 				$this->write('Created <green>.vscode/launch.json</green>.');
@@ -147,7 +147,7 @@ class PostCreateProject extends Command
 			// prompt to copy .env
 			$this->nl();
 			$this->write('<yellow>.env not found.</yellow>');
-			$copy_env = $this->confirm('Would you like to create <green>.env</green> from the example?', 'y');
+			$copy_env = $this->confirm('Would you like to create <green>.env</green> from the example?', true);
 			if ($copy_env) {
 				$fs->copy($env_src, $env_dst);
 				$this->write('Created <green>.env</green>.');
@@ -358,7 +358,7 @@ class PostCreateProject extends Command
 		$this->write("  LISTEN_DOMAIN: {$settings['LISTEN_DOMAIN']}");
 		$this->write("  XDEBUG_PORT:   {$settings['XDEBUG_PORT']}");
 
-		$confirm = $this->confirm('Apply these changes?', 'y');
+		$confirm = $this->confirm('Apply these changes?', true);
 		if (!$confirm) {
 			$this->write('<yellow>No changes were made.</yellow>');
 			return static::STATUS_SUCCESS;
@@ -394,7 +394,7 @@ class PostCreateProject extends Command
 		$recreate_certs = false;
 		if ($cert_files_exist = ($fs->has($cert_file) || $fs->has($key_file))) {
 			$this->nl();
-			$recreate_certs = $this->confirm('<yellow>HTTPS certificate files already exist.</yellow> Would you like to recreate them using mkcert? This will overwrite the existing files.', 'n');
+			$recreate_certs = $this->confirm('<yellow>HTTPS certificate files already exist.</yellow> Would you like to recreate them using mkcert? This will overwrite the existing files.', false);
 		}
 
 		// delete existing cert files if needed
@@ -421,10 +421,10 @@ class PostCreateProject extends Command
 					$this->write('<green>mkcert is installed.</green>');
 					$this->write("mkcert command to be run:");
 					$this->write("  <yellow>{$mkcert_cmd}</yellow>");
-					$create_cert = $this->confirm('Would you like to create a local HTTPS certificate for the domain?', 'y');
+					$create_cert = $this->confirm('Would you like to create a local HTTPS certificate for the domain?', true);
 				} else {
 					$this->write('<yellow>mkcert is not detected.</yellow> You can install mkcert from <blue>https://github.com/FiloSottile/mkcert</blue> to create local HTTPS certificates easily. After it is installed, you can retry detection and create the certificate.');
-					$try_again = $this->confirm('Do you want to retry mkcert detection? Enter "n" to skip automatic HTTPS certificate creation.', 'y');
+					$try_again = $this->confirm('Do you want to retry mkcert detection? Enter "n" to skip automatic HTTPS certificate creation.', true);
 				}
 			} while ($try_again);
 
@@ -456,7 +456,7 @@ class PostCreateProject extends Command
 		if (!$cert_files_exist && $skip_automatic_mkcert) {
 			$this->nl();
 			$this->write('<yellow>Automatic HTTPS certificate creation cannot run in this environment.</yellow>');
-			$queue_mkcert = $this->confirm('Would you like setup.sh to try creating the local HTTPS certificate on the host after project creation?', 'y');
+			$queue_mkcert = $this->confirm('Would you like setup.sh to try creating the local HTTPS certificate on the host after project creation?', true);
 			if ($queue_mkcert && $this->queueMkcertRequest($app, $fs, $settings['LISTEN_DOMAIN'])) {
 				$this->write('<green>Queued host-side HTTPS certificate creation for setup.sh.</green>');
 			} else {
