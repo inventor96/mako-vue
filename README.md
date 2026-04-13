@@ -42,19 +42,16 @@ This is my personal starter template for building web applications with Mako and
 To avoid any potential host incompatibilities, the recommended way to set up this boilerplate is to use the [`setup.sh`](./setup.sh) script, which will use ephemeral Docker containers to run the necessary setup commands for you, and coordinate `mkcert` and `/etc/hosts` updates for local HTTPS and domain name usage.
 
 `setup.sh` supports two workflows:
-- Create a brand-new project from this boilerplate (`./setup.sh <project-name>`)
-- Initialize an already-cloned repository (`./setup.sh` from the repo root)
+1. Create a brand-new project from this boilerplate (`./setup.sh <project-name>`)
+   ```bash
+   curl -sLo /tmp/setup.sh https://raw.githubusercontent.com/inventor96/mako-vue/refs/heads/main/setup.sh && bash /tmp/setup.sh your-project-name
+   ```
 
-```bash
-curl -sLo /tmp/setup.sh https://raw.githubusercontent.com/inventor96/mako-vue/refs/heads/main/setup.sh && bash /tmp/setup.sh your-project-name
-```
-
-If you already cloned this repository and want to run the setup process in-place:
-
-```bash
-cd your-project-name
-./setup.sh
-```
+2. Initialize an already-cloned repository (`./setup.sh` from the repo root)
+   ```bash
+   cd your-project-name
+   ./setup.sh
+   ```
 
 If you wish, and if your host meets all dependencies, you can also use composer directly on your host:
 
