@@ -13,6 +13,96 @@ use PHPUnit\Framework\TestCase;
 
 class PostCreateProjectTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        putenv('MAKO_SKIP_AUTOMATIC_MKCERT');
+        putenv('COMPOSER_ALLOW_SUPERUSER');
+        putenv('COMPOSER_HOME');
+
+        parent::tearDown();
+    }
+
+    public function test_should_skip_automatic_mkcert_when_env_var_is_enabled(): void
+    {
+        putenv('MAKO_SKIP_AUTOMATIC_MKCERT=true');
+        putenv('COMPOSER_ALLOW_SUPERUSER');
+        putenv('COMPOSER_HOME');
+
+        $command = new class($this->createStub(Input::class), $this->createStub(Output::class)) extends PostCreateProject {
+            public function shouldSkipAutomaticMkcertPublic(): bool
+            {
+                return $this->shouldSkipAutomaticMkcert();
+            }
+        };
+
+        $this->assertTrue($command->shouldSkipAutomaticMkcertPublic());
+    }
+
+    public function test_should_skip_automatic_mkcert_in_official_composer_environment(): void
+    {
+        putenv('MAKO_SKIP_AUTOMATIC_MKCERT');
+        putenv('COMPOSER_ALLOW_SUPERUSER=1');
+        putenv('COMPOSER_HOME=/tmp');
+
+        $command = new class($this->createStub(Input::class), $this->createStub(Output::class)) extends PostCreateProject {
+            public function shouldSkipAutomaticMkcertPublic(): bool
+            {
+                return $this->shouldSkipAutomaticMkcert();
+            }
+        };
+
+        $this->assertTrue($command->shouldSkipAutomaticMkcertPublic());
+    }
+
+    public function test_queue_mkcert_request_writes_hidden_file_for_valid_domain(): void
+    {
+        $tmpRoot = sys_get_temp_dir() . '/mako-post-create-queue-' . uniqid('', true);
+        mkdir($tmpRoot . '/app', 0777, true);
+
+        $application = $this->createStub(Application::class);
+        $application->method('getPath')->willReturn($tmpRoot . '/app');
+
+        $command = new class($this->createStub(Input::class), $this->createStub(Output::class)) extends PostCreateProject {
+            public function queueMkcertRequestPublic(Application $app, FileSystem $fs, string $domain): bool
+            {
+                return $this->queueMkcertRequest($app, $fs, $domain);
+            }
+        };
+
+        $result = $command->queueMkcertRequestPublic($application, new FileSystem(), 'good.dev');
+
+        $this->assertTrue($result);
+        $this->assertSame("good.dev\n", file_get_contents($tmpRoot . '/.mkcert-request'));
+
+        unlink($tmpRoot . '/.mkcert-request');
+        rmdir($tmpRoot . '/app');
+        rmdir($tmpRoot);
+    }
+
+    public function test_queue_mkcert_request_rejects_invalid_domain(): void
+    {
+        $tmpRoot = sys_get_temp_dir() . '/mako-post-create-invalid-queue-' . uniqid('', true);
+        mkdir($tmpRoot . '/app', 0777, true);
+
+        $application = $this->createStub(Application::class);
+        $application->method('getPath')->willReturn($tmpRoot . '/app');
+
+        $command = new class($this->createStub(Input::class), $this->createStub(Output::class)) extends PostCreateProject {
+            public function queueMkcertRequestPublic(Application $app, FileSystem $fs, string $domain): bool
+            {
+                return $this->queueMkcertRequest($app, $fs, $domain);
+            }
+        };
+
+        $result = $command->queueMkcertRequestPublic($application, new FileSystem(), 'bad domain');
+
+        $this->assertFalse($result);
+        $this->assertFileDoesNotExist($tmpRoot . '/.mkcert-request');
+
+        rmdir($tmpRoot . '/app');
+        rmdir($tmpRoot);
+    }
+
     public function test_execute_returns_success_when_user_declines_to_apply_changes(): void
     {
         $application = $this->createStub(Application::class);
@@ -502,6 +592,64 @@ class PostCreateProjectTest extends TestCase
             in_array('  <red>mkcert failed</red>', $command->writes, true)
         );
 
+        unlink($tmpRoot . '/.env');
+        unlink($tmpRoot . '/.vscode/launch.json');
+        unlink($tmpRoot . '/.vscode/tasks.json');
+        rmdir($tmpRoot . '/docker/caddy/certs');
+        rmdir($tmpRoot . '/docker/caddy');
+        rmdir($tmpRoot . '/docker');
+        rmdir($tmpRoot . '/.vscode');
+        rmdir($tmpRoot . '/app');
+        rmdir($tmpRoot);
+    }
+
+    public function test_execute_queues_host_mkcert_request_when_automatic_handling_is_skipped(): void
+    {
+        putenv('MAKO_SKIP_AUTOMATIC_MKCERT=1');
+
+        $tmpRoot = sys_get_temp_dir() . '/mako-post-create-mkcert-queue-flow-' . uniqid('', true);
+        mkdir($tmpRoot . '/app', 0777, true);
+        mkdir($tmpRoot . '/.vscode', 0777, true);
+        mkdir($tmpRoot . '/docker/caddy/certs', 0777, true);
+
+        file_put_contents($tmpRoot . '/.env', "LISTEN_IP=127.0.0.9\nLISTEN_DOMAIN=good.dev\nXDEBUG_PORT=9555\n");
+        file_put_contents(
+            $tmpRoot . '/.vscode/launch.json',
+            json_encode([
+                'configurations' => [[
+                    'type' => 'php',
+                    'request' => 'launch',
+                    'pathMappings' => ['/var/www/html' => '${workspaceFolder}'],
+                    'port' => 9555,
+                ]],
+            ])
+        );
+        file_put_contents($tmpRoot . '/.vscode/tasks.json', "{}\n");
+
+        $application = $this->createStub(Application::class);
+        $application->method('getPath')->willReturn($tmpRoot . '/app');
+        $application->method('getEnvironment')->willReturn('development');
+
+        $command = $this->makeStubbedCommand(
+            ['good.dev', '127.0.0.9', '9555'],
+            [true, true],
+            [true],
+            [['output' => [], 'code' => 0]]
+        );
+
+        $result = $command->execute($application, new FileSystem());
+
+        $this->assertSame(PostCreateProject::STATUS_SUCCESS, $result);
+        $this->assertFileExists($tmpRoot . '/.mkcert-request');
+        $this->assertSame("good.dev\n", file_get_contents($tmpRoot . '/.mkcert-request'));
+        $this->assertTrue(
+            in_array('<green>Queued host-side HTTPS certificate creation for setup.sh.</green>', $command->writes, true)
+        );
+        $this->assertFalse(
+            in_array('<green>HTTPS certificate created successfully.</green>', $command->writes, true)
+        );
+
+        unlink($tmpRoot . '/.mkcert-request');
         unlink($tmpRoot . '/.env');
         unlink($tmpRoot . '/.vscode/launch.json');
         unlink($tmpRoot . '/.vscode/tasks.json');

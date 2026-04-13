@@ -16,6 +16,48 @@ use mako\reactor\Command;
 class PostCreateProject extends Command
 {
 	/**
+	 * Determines whether automatic mkcert handling should be skipped.
+	 */
+	protected function shouldSkipAutomaticMkcert(): bool
+	{
+		$skip_env = getenv('MAKO_SKIP_AUTOMATIC_MKCERT');
+		if ($skip_env !== false && in_array(strtolower(trim($skip_env)), ['1', 'true', 'yes', 'on'], true)) {
+			return true;
+		}
+
+		// Composer's official image reliably exposes these env vars.
+		$composer_allow_superuser = getenv('COMPOSER_ALLOW_SUPERUSER');
+		$composer_home = getenv('COMPOSER_HOME');
+		if ($composer_allow_superuser === '1' && $composer_home === '/tmp') {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns true if the domain is safe to persist for host-side mkcert creation.
+	 */
+	protected function isValidMkcertDomain(string $domain): bool
+	{
+		return preg_match('/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/', $domain) === 1;
+	}
+
+	/**
+	 * Stores a host-side mkcert request containing only the domain name.
+	 */
+	protected function queueMkcertRequest(Application $app, FileSystem $fs, string $domain): bool
+	{
+		if (!$this->isValidMkcertDomain($domain)) {
+			return false;
+		}
+
+		$fs->put($app->getPath() . '/../.mkcert-request', $domain . PHP_EOL);
+
+		return true;
+	}
+
+	/**
 	 * Checks if a shell command exists on the current system.
 	 *
 	 * @codeCoverageIgnore
@@ -346,6 +388,7 @@ class PostCreateProject extends Command
 		$cert_file = realpath($app->getPath() . '/../docker/caddy/certs') . '/_wildcard.' . $settings['LISTEN_DOMAIN'] . '.pem';
 		$key_file = realpath($app->getPath() . '/../docker/caddy/certs') . '/_wildcard.' . $settings['LISTEN_DOMAIN'] . '-key.pem';
 		$mkcert_cmd = "mkcert -cert-file '{$cert_file}' -key-file '{$key_file}' '{$settings['LISTEN_DOMAIN']}' '*.{$settings['LISTEN_DOMAIN']}'";
+		$skip_automatic_mkcert = $this->shouldSkipAutomaticMkcert();
 
 		// check if cert files already exist
 		$recreate_certs = false;
@@ -366,8 +409,8 @@ class PostCreateProject extends Command
 			$cert_files_exist = false;
 		}
 
-		// create mkcert certs if they don't exist
-		if (!$cert_files_exist) {
+		// create mkcert certs if they don't exist and automatic mkcert handling is not skipped
+		if (!$cert_files_exist && !$skip_automatic_mkcert) {
 			// check for mkcert
 			$create_cert = false;
 			$try_again = false;
@@ -402,6 +445,22 @@ class PostCreateProject extends Command
 				}
 			} else {
 				$this->write('<yellow>Skipping HTTPS certificate creation.</yellow> Please create the certificate files manually so the Caddy container can start correctly:');
+				$this->write("  Cert file: <blue>{$cert_file}</blue>");
+				$this->write("  Key file:  <blue>{$key_file}</blue>");
+			}
+		}
+
+		// if cert files don't exist and automatic mkcert handling is skipped,
+		// queue a host-side mkcert request for setup.sh and instruct user to
+		// create certs manually if queuing fails
+		if (!$cert_files_exist && $skip_automatic_mkcert) {
+			$this->nl();
+			$this->write('<yellow>Automatic HTTPS certificate creation cannot run in this environment.</yellow>');
+			$queue_mkcert = $this->confirm('Would you like setup.sh to try creating the local HTTPS certificate on the host after project creation?', 'y');
+			if ($queue_mkcert && $this->queueMkcertRequest($app, $fs, $settings['LISTEN_DOMAIN'])) {
+				$this->write('<green>Queued host-side HTTPS certificate creation for setup.sh.</green>');
+			} else {
+				$this->write('<yellow>Skipping automatic HTTPS certificate creation.</yellow> Please create the certificate files manually so the Caddy container can start correctly:');
 				$this->write("  Cert file: <blue>{$cert_file}</blue>");
 				$this->write("  Key file:  <blue>{$key_file}</blue>");
 			}
