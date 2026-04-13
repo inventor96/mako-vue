@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PROJECT_NAME="${1:?Usage: ./setup.sh <project-name>}"
-PARENT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PARENT_DIR="$(pwd)"
 PROJECT_DIR="$PARENT_DIR/$PROJECT_NAME"
 MKCERT_REQUEST_FILE="$PROJECT_DIR/.mkcert-request"
 MKCERT_NOTICE=0
