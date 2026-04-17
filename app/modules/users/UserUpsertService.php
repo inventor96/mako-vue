@@ -5,8 +5,12 @@ namespace app\modules\users;
 use app\models\User;
 use mako\database\exceptions\DatabaseException;
 use mako\gatekeeper\adapters\Adapter;
+use mako\gatekeeper\Gatekeeper;
 use mako\validator\exceptions\ValidationException;
 
+/**
+ * @property array $assignable This actually exists on the User model, but we have this here to satisfy the IDE
+ */
 class UserUpsertService
 {
 	/**
@@ -16,7 +20,10 @@ class UserUpsertService
 	 */
 	protected const EXCLUDE_FIELDS = [];
 
-	public function __construct(protected Adapter $gatekeeper) {}
+	/**
+	 * @param Adapter|Gatekeeper $gatekeeper The gatekeeper instance for managing users.
+	 */
+	public function __construct(protected Gatekeeper $gatekeeper) {}
 
 	/**
 	 * Create or update a user record.
@@ -47,9 +54,9 @@ class UserUpsertService
 					array_flip(
 						array_merge(
 							array_diff(
-								$user->assignable,
-								// these fields are handled by the gatekeeper
-								['email', 'username', 'password'],
+								(fn() => $this->assignable)->call($user), // `$assignable` is protected in the User model
+								// these fields are handled separately by the gatekeeper instance
+								['email', 'username', 'password', 'is_active', 'groups'],
 							),
 							self::EXCLUDE_FIELDS,
 						)
@@ -61,9 +68,9 @@ class UserUpsertService
 				// create the user record
 				$created = $this->gatekeeper->createUser(
 					$fields['email'],
-					$fields['email'],
+					$fields['username'] ?? $fields['email'],
 					$fields['password'] ?? '',
-					false,
+					$fields['is_active'] ?? false,
 					$extras
 				);
 
@@ -74,6 +81,17 @@ class UserUpsertService
 				$user = $created;
 			}
 		} catch (DatabaseException $e) {
+			$username = $fields['username'] ?? '';
+			if (
+				$username !== '' && strpos($e->getMessage(), "Duplicate entry '{$username}' for key 'username'") !== false
+			) {
+				throw new ValidationException(
+					['username' => "A user already exists with the username '{$username}'."],
+					"A user already exists with the username '{$username}'.",
+					0,
+					$e
+				);
+			}
 			$email = $fields['email'] ?? '';
 			if (
 				$email !== '' && (
@@ -81,7 +99,12 @@ class UserUpsertService
 					|| strpos($e->getMessage(), "Duplicate entry '{$email}' for key 'email'") !== false
 				)
 			) {
-				throw new ValidationException(['email' => "A user already exists with the email '{$email}'."], '', 0, $e);
+				throw new ValidationException(
+					['email' => "A user already exists with the email '{$email}'."],
+					"A user already exists with the email '{$email}'.",
+					0,
+					$e
+				);
 			}
 
 			throw $e;
