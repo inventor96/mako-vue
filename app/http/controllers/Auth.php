@@ -39,7 +39,7 @@ class Auth extends ControllerBase
 
 		// attempt the login
 		$result = $this->gatekeeper->login($post['email'], $post['password'], !!$post['remember']);
-		if ($result === true) {
+		if ($result === LoginStatus::Ok) {
 			return $this->safeRedirectResponse('dashboard:home');
 		} else {
 			$this->session->putFlash('error', match ($result) {
