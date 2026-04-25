@@ -140,7 +140,7 @@ class Auth extends ControllerBase
 				// send reset email
 				$token = $user->generateActionToken();
 				$user->save();
-				return $mailer->sendTemplate([EmailUser::fromUser($user)], 'Password Reset', 'forgot-password', [
+				$mailer->sendTemplate([EmailUser::fromUser($user)], 'Password Reset', 'forgot-password', [
 					'first_name' => $user->first_name,
 					'token' => $token,
 				]);
