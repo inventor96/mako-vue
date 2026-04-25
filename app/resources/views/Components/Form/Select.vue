@@ -77,7 +77,7 @@ function onChange(event) {
 				v-bind="$attrs"
 			>
 				<option v-if="props.placeholder" value="" disabled selected class="d-none">{{ props.placeholder }}</option>
-				<option v-for="(value, key) in props.options" :key="key" :value="value">
+				<option v-for="(value, key) in props.options" :key="key" :value="key">
 					{{ value }}
 				</option>
 				<slot />
