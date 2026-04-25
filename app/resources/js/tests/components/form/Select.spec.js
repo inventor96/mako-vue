@@ -15,8 +15,8 @@ describe('Select', () => {
 
     it('emits update:modelValue when the selection changes', async () => {
         const wrapper = mount(Select, { props: { id: 'fruit', options } });
-        await wrapper.find('select').setValue('Banana');
-        expect(wrapper.emitted('update:modelValue')).toEqual([['Banana']]);
+        await wrapper.find('select').setValue('banana');
+        expect(wrapper.emitted('update:modelValue')).toEqual([['banana']]);
     });
 
     it('shows is-invalid class and error message when error prop is set', () => {

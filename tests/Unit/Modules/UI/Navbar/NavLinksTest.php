@@ -26,8 +26,8 @@ class NavLinksTest extends TestCase
                     new NavLink($name, $icon, '/' . str_replace(':', '/', $routeName), false)
             );
 
-        $links = new NavLinks($factory, null);
-        $right = $links->generateRightLinks();
+        $links = new NavLinks($factory);
+        $right = $links->generateRightLinks(null);
 
         $this->assertCount(2, $right);
         $this->assertSame('Sign Up', $right[0]->name);
@@ -48,8 +48,8 @@ class NavLinksTest extends TestCase
                     new NavLink($name, $icon, '/' . str_replace(':', '/', $routeName), false)
             );
 
-        $links = new NavLinks($factory, $this->newUserWithoutConstructor());
-        $right = $links->generateRightLinks();
+        $links = new NavLinks($factory);
+        $right = $links->generateRightLinks($this->newUserWithoutConstructor());
 
         $this->assertCount(2, $right);
         $this->assertSame('Account', $right[0]->name);
@@ -60,8 +60,8 @@ class NavLinksTest extends TestCase
     {
         $factory = $this->createStub(NavLinkFactory::class);
 
-        $guestLinks = (new NavLinks($factory, null))->generateLeftLinks();
-        $authLinks = (new NavLinks($factory, $this->newUserWithoutConstructor()))->generateLeftLinks();
+        $guestLinks = (new NavLinks($factory))->generateLeftLinks(null);
+        $authLinks = (new NavLinks($factory))->generateLeftLinks($this->newUserWithoutConstructor());
 
         $this->assertSame([], $guestLinks);
         $this->assertSame([], $authLinks);
