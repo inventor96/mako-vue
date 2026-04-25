@@ -2,7 +2,6 @@
 namespace app\http\controllers;
 
 use app\models\ValidatorSpecInterface;
-use app\modules\ui\navbar\NavLinkFactory;
 use app\modules\ui\navbar\NavLinks;
 use app\models\User;
 use InvalidArgumentException;
@@ -28,19 +27,18 @@ abstract class ControllerBase extends Controller {
 		protected ViewFactory $view,
 		protected ValidatorFactory $validator,
 		protected Request $request,
-		Application $app, Session $session, NavLinkFactory $nav
+		Application $app, Session $session, NavLinks $navlinks,
 	) {
 		// shared data
-		$this->view->autoAssign('*', function() use ($app, $nav, $session) {
-			$navlinks = new NavLinks($nav, $this->getUser());
+		$this->view->autoAssign('*', function() use ($app, $navlinks, $session) {
 			$time = (string)$this->request->server->get('REQUEST_TIME_FLOAT');
 			$success = $session->getFlash('success');
 			$warning = $session->getFlash('warning');
 			$error = $session->getFlash('error');
 			return [
 				'_env' => $app->getEnvironment(),
-				'_left_navlinks' => $navlinks->generateLeftLinks(),
-				'_right_navlinks' => $navlinks->generateRightLinks(),
+				'_left_navlinks' => $navlinks->generateLeftLinks($this->getUser()),
+				'_right_navlinks' => $navlinks->generateRightLinks($this->getUser()),
 				'_container_success' => $success ? [$time => $success] : [],
 				'_container_warning' => $warning ? [$time => $warning] : [],
 				'_container_error' => $error ? [$time => $error] : [],

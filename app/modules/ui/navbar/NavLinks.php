@@ -6,17 +6,17 @@ use app\models\User;
 class NavLinks {
 	public function __construct(
 		protected NavLinkFactory $nav,
-		protected ?User $user,
 	) {}
 
 	/**
 	 * Generate the navbar links to show on the left side of the navbar
 	 *
+	 * @param User|null $user The current user, or null if not logged in
 	 * @return NavLink[]
 	 */
-	public function generateLeftLinks(): array {
+	public function generateLeftLinks(?User $user): array {
 		// guest
-		if ($this->user === null) {
+		if ($user === null) {
 			return [];
 		}
 
@@ -30,11 +30,12 @@ class NavLinks {
 	/**
 	 * Generates the navbar links to show on the right side of the navbar
 	 *
+	 * @param User|null $user The current user, or null if not logged in
 	 * @return NavLink[]
 	 */
-	public function generateRightLinks(): array {
+	public function generateRightLinks(?User $user): array {
 		// guest
-		if ($this->user === null) {
+		if ($user === null) {
 			return [
 				$this->nav->createFromRoute('Sign Up', 'bi-person-plus', 'auth:signup'),
 				$this->nav->createFromRoute('Log In', 'bi-box-arrow-in-right', 'auth:login'),
