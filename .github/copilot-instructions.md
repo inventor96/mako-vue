@@ -12,22 +12,24 @@
 - Frontend is Vue 3 + Inertia with pages/components/layouts under `app/resources/views/` and entrypoint at `app/resources/js/app.js`.
 - Prefer placing domain logic in modules/services instead of controllers.
 - Keep shared controller behavior aligned with `app/http/controllers/ControllerBase.php`.
-
 ## Build and Test
 - Frontend:
-  - `npm run dev`
-  - `npm run build`
-  - `npm test`
-  - `npm run test:coverage`
+  - `docker compose exec frontend npm run dev`
+  - `docker compose exec frontend npm run build`
+  - `docker compose exec frontend npm test`
+  - `docker compose exec frontend npm run test:coverage`
 - Backend:
-  - `composer test`
-  - `composer test:unit`
-  - `composer test:coverage`
+  - `docker compose exec backend composer test`
+  - `docker compose exec backend composer test:unit`
+  - `docker compose exec backend composer test:coverage`
 - Docker-first local development:
   - `docker compose up`
-  - Run tests in container when needed:
-    - `docker compose exec backend composer test`
-    - `docker compose exec frontend npm test`
+
+## Database
+- Migrations are in `app/database/migrations/`.
+- To create a new migration, run `docker compose exec backend php app/reactor migration:create`. If creating more than one migration at a time, wait 1 second between commands to ensure unique timestamps.
+- Do not run migrations unless specifically requested. The user should review migration files before applying them.
+- To run migrations: `docker compose exec backend php app/reactor migration:up`
 
 ## Conventions
 - Use hierarchical environment config overrides by loading base config and changing only needed keys (see `app/config/` and `app/config/<env>/`).
