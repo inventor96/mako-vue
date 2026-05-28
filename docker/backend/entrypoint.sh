@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Set cache directory permissions
+chown -R www-data:www-data /var/www/html/app/storage
+
 # If the first argument is apache2-foreground, we assume we're running the app normally
 if [ "$1" = "apache2-foreground" ]; then
   # Wait for DB

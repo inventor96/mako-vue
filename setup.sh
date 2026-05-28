@@ -18,14 +18,17 @@ MKCERT_NOTICE_REASON=""
 MKCERT_NOTICE_COMMAND=""
 
 if [ "$#" -eq 0 ]; then
+  # No arguments: assume existing repository setup
   MODE="existing"
   PROJECT_DIR="$PARENT_DIR"
 elif [ "$#" -eq 1 ]; then
   case "$1" in
+    # Help flag: show usage and exit
     -h|--help)
       print_usage
       exit 0
       ;;
+    # Any other single argument: treat as new project name
     *)
       MODE="new"
       PROJECT_NAME="$1"
@@ -156,7 +159,6 @@ DOCKER_FLAGS="--rm -i"
 
 if [ "$MODE" = "existing" ]; then
   docker run $DOCKER_FLAGS \
-    --user "$(id -u):$(id -g)" \
     -e MAKO_SKIP_AUTOMATIC_MKCERT=1 \
     -v "$PROJECT_DIR:/app" \
     -v /etc/hosts:/etc/hosts:ro \
@@ -165,7 +167,6 @@ if [ "$MODE" = "existing" ]; then
     sh -c "composer install && php app/reactor post-create-project"
 else
   docker run $DOCKER_FLAGS \
-    --user "$(id -u):$(id -g)" \
     -e MAKO_SKIP_AUTOMATIC_MKCERT=1 \
     -v "$PARENT_DIR:/workspace" \
     -v /etc/hosts:/etc/hosts:ro \
@@ -181,7 +182,6 @@ process_mkcert_request
 echo ">> Running frontend build"
 
 docker run $DOCKER_FLAGS \
-  --user "$(id -u):$(id -g)" \
   -v "$PROJECT_DIR:/app" \
   -w /app \
   node:lts \

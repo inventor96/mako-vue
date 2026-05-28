@@ -38,6 +38,12 @@ This is my personal starter template for building web applications with Mako and
 
 \* Local development only.
 
+## Development Prerequisites
+- [Docker and Docker Compose](https://docs.docker.com/engine/install/) installed on your host machine
+- Docker [Rootless mode](https://docs.docker.com/engine/security/rootless/) configured
+- [`CAP_NET_BIND_SERVICE` set on `rootlesskit`](https://docs.docker.com/engine/security/rootless/tips/#exposing-privileged-ports) to allow binding to privileged ports
+- [`mkcert`](https://github.com/FiloSottile/mkcert) installed on your host machine for local HTTPS
+
 ## How to Use It
 To avoid any potential host incompatibilities, the recommended way to set up this boilerplate is to use the [`setup.sh`](./setup.sh) script, which will use ephemeral Docker containers to run the necessary setup commands for you, and coordinate `mkcert` and `/etc/hosts` updates for local HTTPS and domain name usage.
 
@@ -71,5 +77,4 @@ For additional details, please see the [wiki](https://github.com/inventor96/mako
 ## Limitations
 - `vite.config.js` is setup for HTTPS via Caddy in Docker. If you are not using Docker, you may need to adjust the Vite server settings for HTTPS or switch to HTTP.
 - Local development environment is optimized for Linux hosts. Other OSes may require additional configuration.
-- Production readiness (security, performance optimizations, etc.) in a Docker context has not been fully tested.
 - Vue DevTools in Docker cannot open files in an IDE running on the host.
